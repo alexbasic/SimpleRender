@@ -1,0 +1,10 @@
+E:\Projects\SimpleRender\SimpleRender.Test\obj\Debug\SimpleRender.Test.csprojResolveAssemblyReference.cache
+E:\Projects\SimpleRender\SimpleRender.Test\bin\Debug\Data\african_head.obj
+E:\Projects\SimpleRender\SimpleRender.Test\bin\Debug\SimpleRender.Test.dll
+E:\Projects\SimpleRender\SimpleRender.Test\bin\Debug\SimpleRender.Test.pdb
+E:\Projects\SimpleRender\SimpleRender.Test\bin\Debug\nunit.framework.dll
+E:\Projects\SimpleRender\SimpleRender.Test\bin\Debug\SimpleRender.exe
+E:\Projects\SimpleRender\SimpleRender.Test\bin\Debug\SimpleRender.pdb
+E:\Projects\SimpleRender\SimpleRender.Test\bin\Debug\nunit.framework.xml
+E:\Projects\SimpleRender\SimpleRender.Test\obj\Debug\SimpleRender.Test.dll
+E:\Projects\SimpleRender\SimpleRender.Test\obj\Debug\SimpleRender.Test.pdb
