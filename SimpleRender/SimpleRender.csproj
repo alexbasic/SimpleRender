@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Draw2D.cs" />
+    <Compile Include="Draw3D.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="GCanvas.cs">
       <SubType>Form</SubType>
@@ -57,6 +58,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="UnsafeBitmap.cs" />
+    <Compile Include="Vector2f.cs" />
+    <Compile Include="Vector2i.cs" />
+    <Compile Include="Vector3f.cs" />
+    <Compile Include="Vector3i.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="WaveForm.cs" />
   </ItemGroup>
