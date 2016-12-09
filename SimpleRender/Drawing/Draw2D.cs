@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleRender
+namespace SimpleRender.Drawing
 {
     public class Draw2D
     {

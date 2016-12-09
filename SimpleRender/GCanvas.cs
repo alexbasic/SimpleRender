@@ -23,41 +23,41 @@ namespace SimpleRender
 
         public void Drawing(object sender, EventArgs e)
         {
-            Draw();
-            canvas.Clear(Color.Black);
-            canvas.DrawImage(Image, new Point(0, 0));
+            //Draw();
+            //canvas.Clear(Color.Black);
+            //canvas.DrawImage(Image, new Point(0, 0));
         }
 
         public void OnResizing(object sender, EventArgs e)
         {
-            CreateImage();
-            Drawing(sender, e);
+            //CreateImage();
+            //Drawing(sender, e);
         }
 
         private void InitComponents()
         {
-            canvas = CreateGraphics();
-            this.Shown += new EventHandler(this.Drawing);
-            this.Load += new EventHandler(this.Drawing);
-            this.Resize += new EventHandler(this.OnResizing);
-            SceneObject = new Scene();
-            SceneObject.Camera = new Camera();
-            SceneObject.Camera.Wired = false;
-            CreateImage();
+            //canvas = CreateGraphics();
+            //this.Shown += new EventHandler(this.Drawing);
+            //this.Load += new EventHandler(this.Drawing);
+            //this.Resize += new EventHandler(this.OnResizing);
+            //SceneObject = new Scene();
+            //SceneObject.Camera = new Camera();
+            //SceneObject.Camera.Wired = false;
+            //CreateImage();
 
-            SceneObject.Objects = new List<Object3D>();
-            SceneObject.Objects.Add(WaveForm.Load("Data\\african_head.obj"));
+            //SceneObject.Objects = new List<Object3D>();
+            //SceneObject.Objects.Add(WaveForm.Load("Data\\african_head.obj"));
         }
 
         private void CreateImage()
         {
-            canvas = CreateGraphics();
-            Image = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
+            //canvas = CreateGraphics();
+            //Image = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
         }
 
         private void Draw()
         {
-            SceneObject.Render(Image);
+            //SceneObject.Render(Image);
         }
     }
 }
