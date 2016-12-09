@@ -35,7 +35,7 @@ namespace SimpleRender.Test
             Application.Run(form);
         }
 
-        [Ignore("NotImplemented")]
+        //[Ignore("NotImplemented")]
         [Test]
         public void DrawLinesOutScreen()
         {
@@ -80,7 +80,7 @@ namespace SimpleRender.Test
             Application.Run(form);
         }
 
-        [Ignore("NotImplemented")]
+        //[Ignore("NotImplemented")]
         [Test]
         public void DrawTrianglesOutScreen()
         {
@@ -91,7 +91,7 @@ namespace SimpleRender.Test
 
                 Bitmap bmp = new Bitmap(320, 240);
 
-                Draw2D.Triangle(new Point2D(-10, 120), new Point2D(170, -10), new Point2D(330, 119), bmp, Color.White);
+                Draw2D.Triangle(new Point2D(-40, 120), new Point2D(170, -50), new Point2D(370, 119), bmp, Color.White);
 
                 e.Graphics.DrawImage(bmp, 0, 0);
             };

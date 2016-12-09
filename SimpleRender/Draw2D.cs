@@ -76,7 +76,7 @@ namespace SimpleRender
             var x = x0;
             var y = y0;
             var err = el / 2;
-            image.SetPixel(x, y, color);
+            SetPixel(image, x, y, color);
 
             for (int t = 0; t < el; t++)
             {
@@ -93,7 +93,7 @@ namespace SimpleRender
                     y += pdy;
                 }
 
-                image.SetPixel(x, y, color);
+                SetPixel(image, x, y, color);
             }
         }
 
@@ -114,12 +114,35 @@ namespace SimpleRender
 
         private static void DrawHorizontalLine(Bitmap image, int sy, int x1, int x2, Color color)
         {
+            var maxX = image.Width - 1;
+            var minX = 0;
+            var maxY = image.Height - 1;
+            var minY = 0;
+
+            //cut out of screen lines
+            if (sy < minY || sy > maxY) return;
+            if (x1 < minX) x1 = minX;
+            if (x2 > maxX) x2 = maxX;
+
             var px = x1;
             while (px <= x2)
             {
-                image.SetPixel(px, sy, color);
+                SetPixel(image, px, sy, color);
                 px++;
             }
+        }
+
+        private static void SetPixel(Bitmap image, int x, int y, Color color) 
+        {
+            var maxX = image.Width - 1;
+            var minX = 0;
+            var maxY = image.Height - 1;
+            var minY = 0;
+
+            //skip out of scren pixels
+            if (x < minX || x > maxX || y < minY || y > maxY) return;
+
+            image.SetPixel(x, y, color);
         }
     }
 }
