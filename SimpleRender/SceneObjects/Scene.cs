@@ -5,16 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleRender
+namespace SimpleRender.SceneObjects
 {
     public class Scene
     {
-        public Camera Camera { get; set; }
-        public List<Object3D> Objects { get; set; }
+        public ICamera Camera { get; set; }
+        public ICollection<Object3D> Objects { get; set; }
 
         public void Render(Bitmap image) 
         {
-            Camera.Render(this, image);
         }
     }
 }

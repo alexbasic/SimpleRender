@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleRender
+namespace SimpleRender.SceneObjects
 {
     public class Object3D
     {
