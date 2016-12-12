@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SimpleRender.Drawing;
+using SimpleRender.SceneObjects;
 
 namespace SimpleRender.Test
 {

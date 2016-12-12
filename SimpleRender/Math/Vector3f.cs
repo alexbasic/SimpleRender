@@ -12,6 +12,15 @@ namespace SimpleRender.Math
         public float Y { get; set; }
         public float Z { get; set; }
 
+        public Vector3f();
+
+        public Vector3f(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
         //implicit or explicit 
         public static explicit operator Vector3i(Vector3f v)
         {
@@ -37,5 +46,7 @@ namespace SimpleRender.Math
         {
             return new Vector3f { X = a.X * b, Y = a.Y * b, Z = a.Z * b };
         }
+
+        public static Vector3f CrossProduct()//todo
     }
 }
