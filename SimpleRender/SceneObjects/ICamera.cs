@@ -43,14 +43,23 @@ namespace SimpleRender.SceneObjects
             return new Point2D((int)screenX, (int)screenY);
         }
 
-        private Vector3f[] CalculatePQR(Vector3f target, Vector3f location, ) 
+        private Vector3f[] CalculatePQR(Vector3f target, Vector3f location, double fov) 
         {
             var p = target - location;
             Vector3f q = null;
-if( p.X == 0 && p.Z == 0) { q = new Vector3f(0, 0, 1)} else {q = new Vector3f(p.Z, 0, -p.X)};
-var r = p*q;//crossProduct(p, q);
-4. Считаем lp = length(p) - длина p
-5. Приводим r и q к длине 2*lp*tan(FOV/2)
+            if (p.X == 0 && p.Z == 0)
+            {
+                q = new Vector3f(0, 0, 1);
+            }
+            else
+            {
+                q = new Vector3f(p.Z, 0, -p.X);
+            };
+            var r = Vector3f.CrossProduct(p, q);
+            var lp = p.Length();
+            //5. Приводим r и q к длине
+            //2*lp*System.Math.Tan(fov/2);
+            return null;
         }
     }
 }

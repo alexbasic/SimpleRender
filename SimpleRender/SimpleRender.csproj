@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Math\Matrix.cs" />
     <Compile Include="SceneObjects\ICamera.cs" />
     <Compile Include="Drawing\Draw2D.cs" />
     <Compile Include="Drawing\Draw3D.cs" />
