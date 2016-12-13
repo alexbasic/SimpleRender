@@ -12,7 +12,8 @@ namespace SimpleRender.Math
         public float Y { get; set; }
         public float Z { get; set; }
 
-        public Vector3f();
+        public Vector3f()
+        { }
 
         public Vector3f(float x, float y, float z)
         {
@@ -47,6 +48,29 @@ namespace SimpleRender.Math
             return new Vector3f { X = a.X * b, Y = a.Y * b, Z = a.Z * b };
         }
 
-        public static Vector3f CrossProduct()//todo
+        public static Vector3f CrossProduct(Vector3f a, Vector3f b)
+        {
+            //Для правой системы координат
+            return new Vector3f(
+                a.Y * b.Z - a.Z * b.Y,
+                a.Z * b.X - a.X * b.Z,
+                a.X * b.Y - a.Y * b.X
+                );
+        }
+
+        public static Vector3f CrossProductLeft(Vector3f a, Vector3f b)
+        {
+            //Для левой системы координат
+            return new Vector3f(
+                a.Z * b.Y - a.Y * b.Z,
+                a.X * b.Z - a.Z * b.X,
+                a.Y * b.X - a.X * b.Y
+                );
+        }
+
+        public double Length()
+        {
+            return System.Math.Sqrt(X * X + Y * Y + Z * Z);
+        }
     }
 }
