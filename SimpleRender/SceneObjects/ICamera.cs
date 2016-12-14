@@ -32,7 +32,7 @@ namespace SimpleRender.SceneObjects
             //  
         }
 
-        private Point2D ConvertToScreenCoord(Vector3f vector) 
+        private Point2D ConvertToScreenCoord1(Vector3f vector) 
         {
             var dist = 1d;
             var a = vector.X / (_halfScreenWidth);
@@ -40,6 +40,14 @@ namespace SimpleRender.SceneObjects
             var c = (vector.Z + dist) / dist;
             var screenX = _halfScreenWidth + _halfScreenWidth * a / c;
             var screenY = _halfscreenHeight - _halfscreenHeight * b / c;
+            return new Point2D((int)screenX, (int)screenY);
+        }
+
+        private Point2D ConvertToScreenCoord2(Vector3f vector)
+        {
+            var fov = 1d;
+            var screenX = _halfScreenWidth + vector.X * fov / vector.Z;
+            var screenY = _halfscreenHeight - vector.Y * fov / vector.Z;
             return new Point2D((int)screenX, (int)screenY);
         }
 
@@ -64,6 +72,7 @@ namespace SimpleRender.SceneObjects
 
         private Matrix GetFrustum(double left, double right, double bottom, double top, double near, double far)
         {
+            if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
             var matrix = new Matrix(
                 2*near/(right-left), 0,                   (right+left)/(right-left), 0,
                 0,                   2*near/(top-bottom), (top+bottom)/(top-bottom), 0,
@@ -72,5 +81,10 @@ namespace SimpleRender.SceneObjects
                 );
             return matrix;
         }
+
+        //matrix to vector and screen coords
+        /*
+         Vec3<float> :: Vec3(Matrix m) : x(m[0][0]/m[3][0]), y(m[1][0]/m[3][0]), z(m[2][0]/m[3][0])
+         */
     }
 }
