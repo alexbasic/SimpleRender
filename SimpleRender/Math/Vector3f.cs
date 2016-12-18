@@ -72,5 +72,15 @@ namespace SimpleRender.Math
         {
             return System.Math.Sqrt(X * X + Y * Y + Z * Z);
         }
+
+        public static Vector3f operator *(Matrix m, Vector3f v)
+        {
+            return new Vector3f
+            {
+                X = (float)(m[0, 0] * v.X + m[1, 0] * v.Y + m[2, 0] * v.Z + m[3, 0] * 1),
+                Y = (float)(m[0, 1] * v.X + m[1, 1] * v.Y + m[2, 1] * v.Z + m[3, 1] * 1),
+                Z = (float)(m[0, 2] * v.X + m[1, 2] * v.Y + m[2, 2] * v.Z + m[3, 2] * 1)
+            };
+        }
     }
 }

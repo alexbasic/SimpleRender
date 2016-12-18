@@ -11,7 +11,7 @@ namespace SimpleRender.SceneObjects
 {
     public interface ICamera
     {
-        void Render();
+        void Render(Scene scene);
     }
 
     public class Camera : ICamera
@@ -19,22 +19,37 @@ namespace SimpleRender.SceneObjects
         private double _halfScreenWidth;
         private double _halfscreenHeight;
 
-        public Camera() 
+        public Bitmap Image { get; set; }
+
+        public Camera(int screenWidth, int screenHeight) 
         {
-            var screenWidth = 1024;
-            var screenHeight = 768;
             _halfScreenWidth = screenWidth / 2;
             _halfscreenHeight = screenHeight / 2;
+            Image = new Bitmap(screenWidth, screenHeight);
         }
 
-        public void Render()
+        public void Render(Scene scene)
         {
-            //  
+            foreach (var primitive in scene.Objects)
+            {
+                foreach (var triangle in primitive.Faces)
+                {
+                    var v1 = primitive.Vertices[triangle.Vertex1];
+                    var v2 = primitive.Vertices[triangle.Vertex2];
+                    var v3 = primitive.Vertices[triangle.Vertex3];
+
+                    Draw2D.Triangle(
+                        ConvertToScreenCoord1(new Vector3f(v1.X, v1.Y, v1.Z)),
+                        ConvertToScreenCoord1(new Vector3f(v2.X, v2.Y, v2.Z)),
+                        ConvertToScreenCoord1(new Vector3f(v3.X, v3.Y, v3.Z)), 
+                        Image, Color.Green);
+                }
+            }
         }
 
         private Point2D ConvertToScreenCoord1(Vector3f vector) 
         {
-            var dist = 1d;
+            var dist = 0.49d;
             var a = vector.X / (_halfScreenWidth);
             var b = vector.Y / (_halfscreenHeight);
             var c = (vector.Z + dist) / dist;
@@ -70,6 +85,7 @@ namespace SimpleRender.SceneObjects
             return null;
         }
 
+        //Creates viewport matrix
         private Matrix GetFrustum(double left, double right, double bottom, double top, double near, double far)
         {
             if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
