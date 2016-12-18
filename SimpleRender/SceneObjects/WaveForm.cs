@@ -12,7 +12,7 @@ namespace SimpleRender.SceneObjects
         public static Object3D Load(string fileName)
         {
             Object3D result = new Object3D();
-            result.Vertices = new List<Vertex>();
+            var vertices = new List<Vertex>();
             result.Normals = new List<Vertex>();
             result.TextureVertices = new List<Vertex>();
             result.Faces = new List<Face>();
@@ -32,7 +32,7 @@ namespace SimpleRender.SceneObjects
                     {
                         string[] vectorElements = normalizedLine.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                         ++verticiseCounter;
-                        result.Vertices.Add(new Vertex
+                        vertices.Add(new Vertex
                         {
                             Number = verticiseCounter,
                             X = Single.Parse(vectorElements[1], newNumberFormatInfo),
@@ -88,6 +88,7 @@ namespace SimpleRender.SceneObjects
                     }
                 }
             }
+            result.Vertices = vertices.ToArray();
             return result;
         }
     }
