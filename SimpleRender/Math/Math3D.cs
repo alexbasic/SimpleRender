@@ -10,7 +10,7 @@ namespace SimpleRender.Math
 
     public static class Math3D
     {
-        public Matrix GetRotationMatrix(double angle_x, double angle_y, double angle_z) 
+        public static Matrix GetRotationMatrix(double angle_x, double angle_y, double angle_z) 
         {
             var A = Math.Cos(angle_x);
             var B = Math.Sin(angle_x);

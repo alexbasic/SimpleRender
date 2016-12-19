@@ -12,6 +12,11 @@ namespace SimpleRender.Math
     {
         private double[,] _array { get; set; }
 
+        public Matrix()
+        {
+            _array = new double[4, 4];
+        }
+
         public Matrix(params double[] array)
         {
             _array = new double[4, 4];
