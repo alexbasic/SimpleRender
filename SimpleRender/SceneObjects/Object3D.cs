@@ -9,6 +9,12 @@ namespace SimpleRender.SceneObjects
 {
     public class Object3D
     {
+        public Object3D() 
+        {
+            Rotation = new Vector3f();
+        }
+
+
         public Vertex Position { get; set; }
         public Vector3f Rotation { get; set; }
         public Vertex[] Vertices { get; set; }

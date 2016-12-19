@@ -32,16 +32,27 @@ namespace SimpleRender.SceneObjects
         {
             foreach (var primitive in scene.Objects)
             {
+                var rotationMatrix = Math3D.GetRotationMatrix(
+                    primitive.Rotation.X,
+                    primitive.Rotation.Y,
+                    primitive.Rotation.Z);
                 foreach (var triangle in primitive.Faces)
                 {
                     var v1 = primitive.Vertices[triangle.Vertex1];
                     var v2 = primitive.Vertices[triangle.Vertex2];
                     var v3 = primitive.Vertices[triangle.Vertex3];
 
+                    var vector1 = rotationMatrix * new Vector3f(v1.X, v1.Y, v1.Z);
+                    var vector2 = rotationMatrix * new Vector3f(v2.X, v2.Y, v2.Z);
+                    var vector3 = rotationMatrix * new Vector3f(v3.X, v3.Y, v3.Z);
+
+                    vector1.Z -= 0.5f;
+                    vector2.Z -= 0.5f;
+                    vector3.Z -= 0.5f;
                     Draw2D.Triangle(
-                        ConvertToScreenCoord1(new Vector3f(v1.X, v1.Y, v1.Z)),
-                        ConvertToScreenCoord1(new Vector3f(v2.X, v2.Y, v2.Z)),
-                        ConvertToScreenCoord1(new Vector3f(v3.X, v3.Y, v3.Z)), 
+                        ConvertToScreenCoord2(vector1),
+                        ConvertToScreenCoord2(vector2),
+                        ConvertToScreenCoord2(vector3), 
                         Image, Color.Green);
                 }
             }

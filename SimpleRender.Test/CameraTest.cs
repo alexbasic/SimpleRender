@@ -60,12 +60,13 @@ namespace SimpleRender.Test
             };
 
             var form = new TestForm();
-            var t = new Timer(form.Container);
+            var t = new Timer();
 
             t.Interval = 500;
             t.Tick += (object sender, EventArgs e) =>
             {
                 cube.Rotation.Y += 0.07f;
+                form.Refresh();
             };
 
             form.Paint += (object sender, PaintEventArgs e) =>
@@ -77,8 +78,10 @@ namespace SimpleRender.Test
 
                 e.Graphics.DrawImage(camera.Image, 0, 0);
 
-                t.Enabled = true;
+               // t.Enabled = true;
             };
+
+            form.Load += (s, e) => { t.Enabled = true; };
 
             Application.Run(form);
         }
