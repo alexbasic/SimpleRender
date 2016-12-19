@@ -18,8 +18,7 @@ namespace SimpleRender.Test
         public void TestDrawCamera() 
         {
             var scene = new Scene();
-            scene.Objects = new List<Object3D>
-            {
+            var cube = 
                 new Object3D
                 {
                     Vertices = new List<Vertex>
@@ -54,10 +53,21 @@ namespace SimpleRender.Test
                         new Face{Vertex1 = 0, Vertex2 = 7, Vertex3 = 3},
                         new Face{Vertex1 = 0, Vertex2 = 4, Vertex3 = 7},
                     }
-                }
+            };
+            scene.Objects = new List<Object3D>
+            {
+                cube
             };
 
             var form = new TestForm();
+            var t = new Timer(form.Container);
+
+            t.Interval = 500;
+            t.Tick += (object sender, EventArgs e) =>
+            {
+                cube.Rotation.Y += 0.07f;
+            };
+
             form.Paint += (object sender, PaintEventArgs e) =>
             {
                 var camera = new Camera(e.ClipRectangle.Width, e.ClipRectangle.Height);
@@ -66,6 +76,8 @@ namespace SimpleRender.Test
                 e.Graphics.Clear(Color.Black);
 
                 e.Graphics.DrawImage(camera.Image, 0, 0);
+
+                t.Enabled = true;
             };
 
             Application.Run(form);
