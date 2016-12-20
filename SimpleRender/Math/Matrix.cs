@@ -28,7 +28,7 @@ namespace SimpleRender.Math
 
         public double this[int item]
         {
-            get { return _array[ item % 4, item / 4]; }
+            get { return _array[item % 4, item / 4]; }
             set
             {
                 _array[item % 4, item / 4] = value;
@@ -38,7 +38,7 @@ namespace SimpleRender.Math
         public double this[int coll, int row]
         {
             get
-            {   
+            {
                 return _array[coll, row];
             }
             set
@@ -73,6 +73,43 @@ namespace SimpleRender.Math
                 Z = (float)(m[2, 0] * v.X + m[2, 1] * v.Y + m[2, 2] * v.Z + m[2, 3] * v.W),
                 W = (float)(m[3, 0] * v.X + m[3, 1] * v.Y + m[3, 2] * v.Z + m[3, 3] * v.W),
             };
+        }
+
+        public static Matrix operator *(Matrix a, Matrix b)
+        {
+            //row count from a
+            //col count from b
+
+            //col 1
+            var x1 = a[0, 0] * b[0, 0] + a[1, 0] * b[0, 1] + a[2, 0] * b[0, 2] + a[3, 0] * b[0, 3];
+            var x2 = a[0, 1] * b[0, 0] + a[1, 1] * b[0, 1] + a[2, 1] * b[0, 2] + a[3, 1] * b[0, 3];
+            var x3 = a[0, 2] * b[0, 0] + a[1, 2] * b[0, 1] + a[2, 2] * b[0, 2] + a[3, 2] * b[0, 3];
+            var x4 = a[0, 3] * b[0, 0] + a[1, 3] * b[0, 1] + a[2, 3] * b[0, 2] + a[3, 3] * b[0, 3];
+
+            //col 2
+            var x5 = a[0, 0] * b[1, 0] + a[1, 0] * b[1, 1] + a[2, 0] * b[1, 2] + a[3, 0] * b[1, 3];
+            var x6 = a[0, 1] * b[1, 0] + a[1, 1] * b[1, 1] + a[2, 1] * b[1, 2] + a[3, 1] * b[1, 3];
+            var x7 = a[0, 2] * b[1, 0] + a[1, 2] * b[1, 1] + a[2, 2] * b[1, 2] + a[3, 2] * b[1, 3];
+            var x8 = a[0, 3] * b[1, 0] + a[1, 3] * b[1, 1] + a[2, 3] * b[1, 2] + a[3, 3] * b[1, 3];
+
+            //col 3
+            var x9 = a[0, 0] * b[2, 0] + a[1, 0] * b[2, 1] + a[2, 0] * b[2, 2] + a[3, 0] * b[2, 3];
+            var x10 = a[0, 1] * b[2, 0] + a[1, 1] * b[2, 1] + a[2, 1] * b[2, 2] + a[3, 1] * b[2, 3];
+            var x11 = a[0, 2] * b[2, 0] + a[1, 2] * b[2, 1] + a[2, 2] * b[2, 2] + a[3, 2] * b[2, 3];
+            var x12 = a[0, 3] * b[2, 0] + a[1, 3] * b[2, 1] + a[2, 3] * b[2, 2] + a[3, 3] * b[2, 3];
+
+            //col 4
+            var x13 = a[0, 0] * b[3, 0] + a[1, 0] * b[3, 1] + a[2, 0] * b[3, 2] + a[3, 0] * b[3, 3];
+            var x14 = a[0, 1] * b[3, 0] + a[1, 1] * b[3, 1] + a[2, 1] * b[3, 2] + a[3, 1] * b[3, 3];
+            var x15 = a[0, 2] * b[3, 0] + a[1, 2] * b[3, 1] + a[2, 2] * b[3, 2] + a[3, 2] * b[3, 3];
+            var x16 = a[0, 3] * b[3, 0] + a[1, 3] * b[3, 1] + a[2, 3] * b[3, 2] + a[3, 3] * b[3, 3];
+
+            return new Matrix(
+                x1, x5, x9,  x13,
+                x2, x6, x10, x14,
+                x3, x7, x11, x15,
+                x4, x8, x12, x16
+                );
         }
     }
 }

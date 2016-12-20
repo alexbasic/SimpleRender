@@ -21,7 +21,7 @@ namespace SimpleRender.SceneObjects
 
         public Bitmap Image { get; set; }
 
-        public Camera(int screenWidth, int screenHeight) 
+        public Camera(int screenWidth, int screenHeight)
         {
             _halfScreenWidth = screenWidth / 2;
             _halfscreenHeight = screenHeight / 2;
@@ -30,32 +30,37 @@ namespace SimpleRender.SceneObjects
 
         public void Render(Scene scene)
         {
+            //TransformedVector = TranslationMatrix * RotationMatrix * ScaleMatrix * OriginalVector;
+            //MVPmatrix = projection * view * model; 
+
             var rnd = new Random();
-            var cvvMatrix = GetFrustumLeft(90, _halfScreenWidth / _halfscreenHeight, 0.001d, 10000d);
+            var cvvMatrix = GetFrustumLeft(75, _halfScreenWidth / _halfscreenHeight, 0.5d, 10000d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
                     primitive.Rotation.X,
                     primitive.Rotation.Y,
                     primitive.Rotation.Z);
+
+                var translationMatrix = Math3D.GetTranslationMatrix(primitive.Position.X, primitive.Position.Y, primitive.Position.Z);
+
+                var scaleMatrix = Math3D.GetScaleMatrix(1,1,1);
+                var modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+
                 foreach (var triangle in primitive.Faces)
                 {
                     var v1 = primitive.Vertices[triangle.Vertex1];
                     var v2 = primitive.Vertices[triangle.Vertex2];
                     var v3 = primitive.Vertices[triangle.Vertex3];
 
-                    var vector1 = cvvMatrix * (rotationMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1));
-                    var vector2 = cvvMatrix * (rotationMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1));
-                    var vector3 = cvvMatrix * (rotationMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1));
-
-                    vector1.Z += 1.5f;
-                    vector2.Z += 1.5f;
-                    vector3.Z += 1.5f;
+                    var vector1 = cvvMatrix * modelMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
+                    var vector2 = cvvMatrix * modelMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
+                    var vector3 = cvvMatrix * modelMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
 
                     Draw2D.Triangle(
                         ConvertToScreenCoord0(vector1),
                         ConvertToScreenCoord0(vector2),
-                        ConvertToScreenCoord0(vector3), 
+                        ConvertToScreenCoord0(vector3),
                         Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128));
                 }
             }
@@ -63,19 +68,18 @@ namespace SimpleRender.SceneObjects
 
         private Vector3f ConvertToDecart(Vector4 vector)
         {
-            vector.W = 1;
             return new Vector3f(vector.X / (float)vector.W, vector.Y / (float)vector.W, vector.Z / (float)vector.W);
         }
 
         private Point2D ConvertToScreenCoord0(Vector4 vector)
         {
             var decart = ConvertToDecart(vector);
-            var screenX =_halfScreenWidth + _halfScreenWidth * decart.X;
+            var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
             var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
             return new Point2D((int)screenX, (int)screenY);
         }
 
-        private Point2D ConvertToScreenCoord1(Vector3f vector) 
+        private Point2D ConvertToScreenCoord1(Vector3f vector)
         {
             var dist = 480d;
             var a = vector.X / (_halfScreenWidth);
@@ -94,7 +98,7 @@ namespace SimpleRender.SceneObjects
             return new Point2D((int)screenX, (int)screenY);
         }
 
-        private Vector3f[] CalculatePQR(Vector3f target, Vector3f location, double fov) 
+        private Vector3f[] CalculatePQR(Vector3f target, Vector3f location, double fov)
         {
             var p = target - location;
             Vector3f q = null;
@@ -121,10 +125,10 @@ namespace SimpleRender.SceneObjects
         {
             if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
             var matrix = new Matrix(
-                2*near/(right-left), 0,                   (right+left)/(right-left), 0,
-                0,                   2*near/(top-bottom), (top+bottom)/(top-bottom), 0,
-                0,                   0,                   -1*(far+near)/(far-near),  -1*(2*far*near)/(far-near),
-                0,                   0,                   -1,                        0
+                2 * near / (right - left), 0, (right + left) / (right - left), 0,
+                0, 2 * near / (top - bottom), (top + bottom) / (top - bottom), 0,
+                0, 0, -1 * (far + near) / (far - near), -1 * (2 * far * near) / (far - near),
+                0, 0, -1, 0
                 );
             return matrix;
         }
@@ -147,10 +151,10 @@ namespace SimpleRender.SceneObjects
 
             if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
             var matrix = new Matrix(
-                Math3D.Cotan(fovy / 2) / aspect, 0,                      0,                                0,
-                0,                               Math3D.Cotan(fovy / 2), 0,                                0,
-                0,                               0,                      (far + near) / (far - near),      1,
-                0,                               0,                      (-2 * far * near) / (far - near), 0
+                Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
+                0, Math3D.Cotan(fovy / 2), 0, 0,
+                0, 0, (far + near) / (far - near), 1,
+                0, 0, (-2 * far * near) / (far - near), 0
                 );
             return matrix;
         }

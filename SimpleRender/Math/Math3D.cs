@@ -10,7 +10,7 @@ namespace SimpleRender.Math
 
     public static class Math3D
     {
-        public static Matrix GetRotationMatrix(double angle_x, double angle_y, double angle_z) 
+        public static Matrix GetRotationMatrix(double angle_x, double angle_y, double angle_z)
         {
             var A = Math.Cos(angle_x);
             var B = Math.Sin(angle_x);
@@ -38,6 +38,24 @@ namespace SimpleRender.Math
             mat[15] = 1;
 
             return mat;
+        }
+
+        public static Matrix GetScaleMatrix(double x, double y, double z)
+        {
+            return new Matrix(
+                x, 0, 0, 0,
+                0, y, 0, 0,
+                0, 0, z, 0,
+                0, 0, 0, 1);
+        }
+
+        public static Matrix GetTranslationMatrix(double x, double y, double z)
+        {
+            return new Matrix(
+                1, 0, 0, x,
+                0, 1, 0, y,
+                0, 0, 1, z,
+                0, 0, 0, 1);
         }
 
         public static double Cotan(double x)
