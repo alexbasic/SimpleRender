@@ -79,8 +79,6 @@ namespace SimpleRender.Test
                 e.Graphics.Clear(Color.Black);
 
                 e.Graphics.DrawImage(camera.Image, 0, 0);
-
-               // t.Enabled = true;
             };
 
             form.Load += (s, e) => { t.Enabled = true; };
