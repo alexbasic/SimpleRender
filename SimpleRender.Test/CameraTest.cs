@@ -25,13 +25,13 @@ namespace SimpleRender.Test
                     {
                         new Vertex{Number = 0, X = -0.5f, Y = -0.5f, Z = -0.5f},
                         new Vertex{Number = 1, X = -0.5f, Y = 0.5f, Z = -0.5f},
-                        new Vertex{Number = 2, X = -0.5f, Y = 0.5f, Z = -1},
-                        new Vertex{Number = 3, X = -0.5f, Y = -0.5f, Z = -1},
+                        new Vertex{Number = 2, X = -0.5f, Y = 0.5f, Z = 0.5f},
+                        new Vertex{Number = 3, X = -0.5f, Y = -0.5f, Z = 0.5f},
 
                         new Vertex{Number = 4, X = 0.5f, Y = -0.5f, Z = -0.5f},
                         new Vertex{Number = 5, X = 0.5f, Y = 0.5f, Z = -0.5f},
-                        new Vertex{Number = 6, X = 0.5f, Y = 0.5f, Z = -1},
-                        new Vertex{Number = 7, X = 0.5f, Y = -0.5f, Z = -1},
+                        new Vertex{Number = 6, X = 0.5f, Y = 0.5f, Z = 0.5f},
+                        new Vertex{Number = 7, X = 0.5f, Y = -0.5f, Z = 0.5f},
                     }.ToArray(),
                     Faces = new List<Face>
                     {
@@ -60,6 +60,7 @@ namespace SimpleRender.Test
             };
 
             var form = new TestForm();
+            form.ClientSize = new Size(320,240);
             var t = new Timer();
 
             t.Interval = 500;
@@ -71,7 +72,7 @@ namespace SimpleRender.Test
 
             form.Paint += (object sender, PaintEventArgs e) =>
             {
-                var camera = new Camera(e.ClipRectangle.Width, e.ClipRectangle.Height);
+                var camera = new Camera(form.ClientSize.Width, form.ClientSize.Height);
                 camera.Render(scene);
 
                 e.Graphics.Clear(Color.Black);
