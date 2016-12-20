@@ -53,14 +53,14 @@ namespace SimpleRender.SceneObjects
                     var v2 = primitive.Vertices[triangle.Vertex2];
                     var v3 = primitive.Vertices[triangle.Vertex3];
 
-                    var vector1 = cvvMatrix * modelMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
+                    var vector1 = cvvMatrix /*viewMatrix*/ * modelMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
                     var vector2 = cvvMatrix * modelMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
                     var vector3 = cvvMatrix * modelMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
 
                     Draw2D.Triangle(
-                        ConvertToScreenCoord0(vector1),
-                        ConvertToScreenCoord0(vector2),
-                        ConvertToScreenCoord0(vector3),
+                        ConvertToScreenCoord0(ConvertToDecart(vector1)),
+                        ConvertToScreenCoord0(ConvertToDecart(vector2)),
+                        ConvertToScreenCoord0(ConvertToDecart(vector3)),
                         Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128));
                 }
             }
@@ -71,9 +71,8 @@ namespace SimpleRender.SceneObjects
             return new Vector3f(vector.X / (float)vector.W, vector.Y / (float)vector.W, vector.Z / (float)vector.W);
         }
 
-        private Point2D ConvertToScreenCoord0(Vector4 vector)
+        private Point2D ConvertToScreenCoord0(Vector3f decart)
         {
-            var decart = ConvertToDecart(vector);
             var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
             var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
             return new Point2D((int)screenX, (int)screenY);
