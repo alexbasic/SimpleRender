@@ -31,7 +31,7 @@ namespace SimpleRender.SceneObjects
         public void Render(Scene scene)
         {
             var rnd = new Random();
-            var cvvMatrix = GetFrustumLeft(75, _halfScreenWidth / _halfscreenHeight, 1000d, 0.01d);
+            var cvvMatrix = GetFrustumLeft(90, _halfScreenWidth / _halfscreenHeight, 0.001d, 10000d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
@@ -44,15 +44,13 @@ namespace SimpleRender.SceneObjects
                     var v2 = primitive.Vertices[triangle.Vertex2];
                     var v3 = primitive.Vertices[triangle.Vertex3];
 
-                    var vector1 = rotationMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
-                    var vector2 = rotationMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
-                    var vector3 = rotationMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
+                    var vector1 = cvvMatrix * (rotationMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1));
+                    var vector2 = cvvMatrix * (rotationMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1));
+                    var vector3 = cvvMatrix * (rotationMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1));
 
-                    vector1.Z -= 1.5f;
-                    vector2.Z -= 1.5f;
-                    vector3.Z -= 1.5f;
-
-
+                    vector1.Z += 1.5f;
+                    vector2.Z += 1.5f;
+                    vector3.Z += 1.5f;
 
                     Draw2D.Triangle(
                         ConvertToScreenCoord0(vector1),
@@ -65,7 +63,16 @@ namespace SimpleRender.SceneObjects
 
         private Vector3f ConvertToDecart(Vector4 vector)
         {
-            return new Vector3f(vector.X / vector.W, vector.Y / vector.W, vector.Z / vector.W);
+            vector.W = 1;
+            return new Vector3f(vector.X / (float)vector.W, vector.Y / (float)vector.W, vector.Z / (float)vector.W);
+        }
+
+        private Point2D ConvertToScreenCoord0(Vector4 vector)
+        {
+            var decart = ConvertToDecart(vector);
+            var screenX =_halfScreenWidth + _halfScreenWidth * decart.X;
+            var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
+            return new Point2D((int)screenX, (int)screenY);
         }
 
         private Point2D ConvertToScreenCoord1(Vector3f vector) 
