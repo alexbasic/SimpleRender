@@ -30,6 +30,8 @@ namespace SimpleRender.SceneObjects
 
         public void Render(Scene scene)
         {
+            var rnd = new Random();
+            var cvvMatrix = GetFrustumLeft(75, _halfScreenWidth / _halfscreenHeight, 1000d, 0.01d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
@@ -42,25 +44,33 @@ namespace SimpleRender.SceneObjects
                     var v2 = primitive.Vertices[triangle.Vertex2];
                     var v3 = primitive.Vertices[triangle.Vertex3];
 
-                    var vector1 = rotationMatrix * new Vector3f(v1.X, v1.Y, v1.Z);
-                    var vector2 = rotationMatrix * new Vector3f(v2.X, v2.Y, v2.Z);
-                    var vector3 = rotationMatrix * new Vector3f(v3.X, v3.Y, v3.Z);
+                    var vector1 = rotationMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
+                    var vector2 = rotationMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
+                    var vector3 = rotationMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
 
-                    vector1.Z -= 0.5f;
-                    vector2.Z -= 0.5f;
-                    vector3.Z -= 0.5f;
+                    vector1.Z -= 1.5f;
+                    vector2.Z -= 1.5f;
+                    vector3.Z -= 1.5f;
+
+
+
                     Draw2D.Triangle(
-                        ConvertToScreenCoord2(vector1),
-                        ConvertToScreenCoord2(vector2),
-                        ConvertToScreenCoord2(vector3), 
-                        Image, Color.Green);
+                        ConvertToScreenCoord0(vector1),
+                        ConvertToScreenCoord0(vector2),
+                        ConvertToScreenCoord0(vector3), 
+                        Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128));
                 }
             }
         }
 
+        private Vector3f ConvertToDecart(Vector4 vector)
+        {
+            return new Vector3f(vector.X / vector.W, vector.Y / vector.W, vector.Z / vector.W);
+        }
+
         private Point2D ConvertToScreenCoord1(Vector3f vector) 
         {
-            var dist = 0.49d;
+            var dist = 480d;
             var a = vector.X / (_halfScreenWidth);
             var b = vector.Y / (_halfscreenHeight);
             var c = (vector.Z + dist) / dist;
@@ -97,7 +107,10 @@ namespace SimpleRender.SceneObjects
         }
 
         //Creates viewport matrix
-        private Matrix GetFrustum(double left, double right, double bottom, double top, double near, double far)
+        /// <summary>
+        /// Rightside-coordinate frustum
+        /// </summary>
+        private Matrix GetFrustumRight(double left, double right, double bottom, double top, double near, double far)
         {
             if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
             var matrix = new Matrix(
@@ -109,9 +122,30 @@ namespace SimpleRender.SceneObjects
             return matrix;
         }
 
-        //matrix to vector and screen coords
-        /*
-         Vec3<float> :: Vec3(Matrix m) : x(m[0][0]/m[3][0]), y(m[1][0]/m[3][0]), z(m[2][0]/m[3][0])
-         */
+        /// <summary>
+        /// Leftside-coordinate frustum
+        /// </summary>
+        /// <param name="fovy">fov  y in degrees</param>
+        /// <param name="aspect">aspect = w div h</param>
+        /// <param name="near">near</param>
+        /// <param name="far">far</param>
+        /// <returns>frustum matrix</returns>
+        private Matrix GetFrustumLeft(double fovyInDegree, double aspect, double near, double far)
+        {
+            //2n/h = ctg(fovy/2)
+            //aspect = w/h
+            //2n/w = ctg(fovy/2)/aspect
+
+            var fovy = fovyInDegree / System.Math.PI;
+
+            if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
+            var matrix = new Matrix(
+                Math3D.Cotan(fovy / 2) / aspect, 0,                      0,                                0,
+                0,                               Math3D.Cotan(fovy / 2), 0,                                0,
+                0,                               0,                      (far + near) / (far - near),      1,
+                0,                               0,                      (-2 * far * near) / (far - near), 0
+                );
+            return matrix;
+        }
     }
 }

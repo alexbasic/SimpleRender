@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Math\Math3D.cs" />
     <Compile Include="Math\Matrix.cs" />
+    <Compile Include="Math\Vector4.cs" />
     <Compile Include="SceneObjects\ICamera.cs" />
     <Compile Include="Drawing\Draw2D.cs" />
     <Compile Include="Drawing\Draw3D.cs" />
@@ -60,10 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneObjects\Scene.cs" />
     <Compile Include="Drawing\UnsafeBitmap.cs" />
-    <Compile Include="Math\Vector2f.cs" />
-    <Compile Include="Math\Vector2i.cs" />
     <Compile Include="Math\Vector3f.cs" />
-    <Compile Include="Math\Vector3i.cs" />
     <Compile Include="SceneObjects\Vertex.cs" />
     <Compile Include="SceneObjects\WaveForm.cs" />
   </ItemGroup>

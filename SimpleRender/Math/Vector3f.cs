@@ -22,17 +22,6 @@ namespace SimpleRender.Math
             Z = z;
         }
 
-        //implicit or explicit 
-        public static explicit operator Vector3i(Vector3f v)
-        {
-            return new Vector3i { X = (int)v.X, Y = (int)v.Y, Z = (int)v.Z };
-        }
-
-        //public static implicit operator Vec3i(Vec3f v)
-        //{
-        //    return new Vec3i { X = (int)v.X, Y = (int)v.Y, Z = (int)v.Z };
-        //}
-
         public static Vector3f operator +(Vector3f a, Vector3f b)
         {
             return new Vector3f { X = a.X + b.X, Y = a.Y + b.Y, Z = a.Z + b.Z };
@@ -71,16 +60,6 @@ namespace SimpleRender.Math
         public double Length()
         {
             return System.Math.Sqrt(X * X + Y * Y + Z * Z);
-        }
-
-        public static Vector3f operator *(Matrix m, Vector3f v)
-        {
-            return new Vector3f
-            {
-                X = (float)(m[0, 0] * v.X + m[1, 0] * v.Y + m[2, 0] * v.Z + m[3, 0] * 0),
-                Y = (float)(m[0, 1] * v.X + m[1, 1] * v.Y + m[2, 1] * v.Z + m[3, 1] * 0),
-                Z = (float)(m[0, 2] * v.X + m[1, 2] * v.Y + m[2, 2] * v.Z + m[3, 2] * 0)
-            };
         }
     }
 }
