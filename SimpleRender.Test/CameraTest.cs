@@ -52,7 +52,8 @@ namespace SimpleRender.Test
 
                         new Face{Vertex1 = 0, Vertex2 = 7, Vertex3 = 3},
                         new Face{Vertex1 = 0, Vertex2 = 4, Vertex3 = 7},
-                    }
+                    },
+                    Position = new Vertex() { X = 0, Y = 0, Z = 2}
             };
             scene.Objects = new List<Object3D>
             {
@@ -63,7 +64,7 @@ namespace SimpleRender.Test
             form.ClientSize = new Size(320,240);
             var t = new Timer();
 
-            t.Interval = 500;
+            t.Interval = 250;
             t.Tick += (object sender, EventArgs e) =>
             {
                 cube.Rotation.Y += 0.07f;
