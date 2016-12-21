@@ -44,8 +44,11 @@ namespace SimpleRender.SceneObjects
 
                 var translationMatrix = Math3D.GetTranslationMatrix(primitive.Position.X, primitive.Position.Y, primitive.Position.Z);
 
-                var scaleMatrix = Math3D.GetScaleMatrix(1,1,1);
-                var modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+                var scaleMatrix = Math3D.GetScaleMatrix(1, 1, 1);
+                var modelMatrix = translationMatrix * (rotationMatrix * scaleMatrix);
+                var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0, -1f, -1f), new Vector3f(0, 0, 0), new Vector3f(0, 1, 0));
+
+                var transformMatrix = cvvMatrix * viewMatrix * modelMatrix;
 
                 foreach (var triangle in primitive.Faces)
                 {
@@ -53,9 +56,9 @@ namespace SimpleRender.SceneObjects
                     var v2 = primitive.Vertices[triangle.Vertex2];
                     var v3 = primitive.Vertices[triangle.Vertex3];
 
-                    var vector1 = cvvMatrix /*viewMatrix*/ * modelMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
-                    var vector2 = cvvMatrix * modelMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
-                    var vector3 = cvvMatrix * modelMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
+                    var vector1 = transformMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
+                    var vector2 = transformMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
+                    var vector3 = transformMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
 
                     Draw2D.Triangle(
                         ConvertToScreenCoord0(ConvertToDecart(vector1)),

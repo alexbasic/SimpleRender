@@ -62,5 +62,57 @@ namespace SimpleRender.Math
         {
             return 1 / Math.Tan(x);
         }
+
+        public static double DotProduct(Vector4 a, Vector4 b)
+        {
+            return a.X * b.X + a.Y + b.Y + a.Z * b.Z + a.W * b.W;
+        }
+
+        public static double DotProduct(Vector3f a, Vector3f b)
+        {
+            return a.X * b.X + a.Y + b.Y + a.Z * b.Z;
+        }
+
+        /// <param name="eye">camera position</param>
+        /// <param name="center">camera target</param>
+        /// <param name="up">camera up</param>
+        public static Matrix GetViewMatrix(Vector3f eye, Vector3f center, Vector3f up)
+        {
+            var zaxis = (eye - center).Normalize();
+            var xaxis = Vector3f.CrossProduct(up, zaxis).Normalize();
+            var yaxis = Vector3f.CrossProduct(zaxis, xaxis).Normalize();
+            //var Minv = Matrix.Identity();
+            //var Tr = Matrix.Identity();
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    Minv[0][i] = x[i];
+            //    Minv[1][i] = y[i];
+            //    Minv[2][i] = z[i];
+            //    Tr[i][3] = -center[i];
+            //}
+            //var modelView = Minv * Tr;
+
+            //return new Matrix(
+            //    xaxis.X, yaxis.X, zaxis.X, 0,
+            //    xaxis.Y, yaxis.Y, zaxis.Y, 0,
+            //    xaxis.Z, yaxis.Z, zaxis.Z, 0,
+            //    -Math3D.DotProduct(xaxis, eye), -Math3D.DotProduct(yaxis, eye), -Math3D.DotProduct(zaxis, eye), 1
+            //    );
+
+            var camRotationMatrix = new Matrix(
+                    xaxis.X, xaxis.Y, xaxis.Z, 0,
+                    yaxis.X, yaxis.Y, yaxis.Z, 0,
+                    zaxis.X, zaxis.Y, zaxis.Z, 0,
+                    0, 0, 0, 1
+                );
+            var camTranslationMatrix = new Matrix(
+                    1, 0, 0, -eye.X,
+                    0, 1, 0, -eye.Y,
+                    0, 0, 1, -eye.Z,
+                    0, 0, 0, 1
+                );
+
+            return camRotationMatrix * camTranslationMatrix;
+        }
     }
 }

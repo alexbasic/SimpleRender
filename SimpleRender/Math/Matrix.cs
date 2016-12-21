@@ -105,10 +105,20 @@ namespace SimpleRender.Math
             var x16 = a[0, 3] * b[3, 0] + a[1, 3] * b[3, 1] + a[2, 3] * b[3, 2] + a[3, 3] * b[3, 3];
 
             return new Matrix(
-                x1, x5, x9,  x13,
+                x1, x5, x9, x13,
                 x2, x6, x10, x14,
                 x3, x7, x11, x15,
                 x4, x8, x12, x16
+                );
+        }
+
+        public static Matrix Identity()
+        {
+            return new Matrix(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
                 );
         }
     }
