@@ -61,5 +61,11 @@ namespace SimpleRender.Math
         {
             return System.Math.Sqrt(X * X + Y * Y + Z * Z);
         }
+
+        public Vector3f Normalize()
+        {
+            var length = (float)Length();
+            return new Vector3f(X / length, Y / length, Z / length);
+        }
     }
 }
