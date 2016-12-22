@@ -5,49 +5,59 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimpleRender.SceneObjects;
 
 namespace SimpleRender.Drawing
 {
     public class Draw3D
     {
-        public static void Triangle(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, int[] zbuffer)
-        {
-        }
-
-        public static void Triangle(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, int[,] zbuffer)
+        public static void Triangle(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, double[] zbuffer)
         {
             // пропускаем рисование если треугольник ребром
-            if (t0.Y == t1.Y && t0.Y == t2.Y) return;
+            if ((int)t0.Y == (int)t1.Y && (int)t0.Y == (int)t2.Y) return;
 
             var A = t0;
             var B = t1;
             var C = t2;
 
             // здесь сортируем вершины (A,B,C) по оси Y
-            if (A.Y > B.Y) Swap(ref A, ref B);
-            if (A.Y > C.Y) Swap(ref A, ref C);
-            if (B.Y > C.Y) Swap(ref B, ref C);
+            if ((int)A.Y > (int)B.Y) Swap(ref A, ref B);
+            if ((int)A.Y > (int)C.Y) Swap(ref A, ref C);
+            if ((int)B.Y > (int)C.Y) Swap(ref B, ref C);
 
-            for (var sy = A.Y; sy <= C.Y; sy++)
+            for (int sy = (int)A.Y; sy <= (int)C.Y; sy++)
             {
-                var x1 = A.X + (sy - A.Y) * (C.X - A.X) / (C.Y - A.Y);
+                int x1 = (int)A.X + (sy - (int)A.Y) * ((int)C.X - (int)A.X) / ((int)C.Y - (int)A.Y);
+                int z1 = (int)A.Z + (sy - (int)A.Y) * ((int)C.Z - (int)A.Z) / ((int)C.Y - (int)A.Y);
                 int x2;
-                if (sy < B.Y)
-                    x2 = (int)(A.X + (sy - A.Y) * (B.X - A.X) / (B.Y - A.Y));
+                int z2;
+                if (sy < (int)B.Y)
+                {
+                    x2 = (int)A.X + (sy - (int)A.Y) * ((int)B.X - (int)A.X) / ((int)B.Y - (int)A.Y);
+                    z2 = (int)A.Z + (sy - (int)A.Y) * ((int)B.Z - (int)A.Z) / ((int)B.Y - (int)A.Y);
+                }
                 else
                 {
-                    if (C.Y == B.Y)
+                    if ((int)C.Y == (int)B.Y)
+                    {
                         x2 = (int)B.X;
+                        z2 = (int)B.Z;
+                    }
                     else
-                        x2 = (int)(B.X + (sy - B.Y) * (C.X - B.X) / (C.Y - B.Y));
+                    {
+                        x2 = (int)B.X + (sy - (int)B.Y) * ((int)C.X - (int)B.X) / ((int)C.Y - (int)B.Y);
+                        z2 = (int)B.Z + (sy - (int)B.Y) * ((int)C.Z - (int)B.Z) / ((int)C.Y - (int)B.Y);
+                    }
                 }
-                if (x1 > x2) { var tmp = x1; x1 = x2; x2 = (int)tmp; }
-                DrawHorizontalLine(image, sy, x1, x2, z1, z2, color);
+                if (x1 > x2) { int tmp = x1; x1 = x2; x2 = tmp; }
+
+                DrawHorizontalLine(image, sy, x1, x2, z1, z2, color, zbuffer);
             }
         }
 
-        private static void DrawHorizontalLine(Bitmap image, int sy, int x1, int x2, int z1, int z2, Color color)
+        private static void DrawHorizontalLine(Bitmap image, int sy, int x1, int x2, double z1, double z2, Color color, double[] zbuffer)
         {
+            var frameWidth = image.Width;
             var maxX = image.Width - 1;
             var minX = 0;
             var maxY = image.Height - 1;
@@ -61,7 +71,13 @@ namespace SimpleRender.Drawing
             var px = x1;
             while (px <= x2)
             {
-                SetPixel(image, px, sy, color);
+                double z = z1 + ((px - x1) * (z2 - z1) / (x2 - x1));
+
+                if (zbuffer[px + sy * frameWidth] > z)
+                {
+                    zbuffer[px + sy * frameWidth] = z;
+                    SetPixel(image, px, sy, color);
+                }
                 px++;
             }
         }
