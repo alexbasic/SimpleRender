@@ -53,7 +53,7 @@ namespace SimpleRender.Test
                         new Face{Vertex1 = 0, Vertex2 = 4, Vertex3 = 3},
                         new Face{Vertex1 = 4, Vertex2 = 7, Vertex3 = 3},
                     },
-                    Position = new Vertex() { X = 0, Y = 0, Z = 2}
+                    Position = new Vertex() { X = 0, Y = 0, Z = 1.25f}
             };
             scene.Objects = new List<Object3D>
             {
