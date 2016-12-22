@@ -28,25 +28,25 @@ namespace SimpleRender.Drawing
             for (int sy = (int)A.Y; sy <= (int)C.Y; sy++)
             {
                 int x1 = (int)A.X + (sy - (int)A.Y) * ((int)C.X - (int)A.X) / ((int)C.Y - (int)A.Y);
-                int z1 = (int)A.Z + (sy - (int)A.Y) * ((int)C.Z - (int)A.Z) / ((int)C.Y - (int)A.Y);
+                double z1 = A.Z + (sy - A.Y) * (C.Z - A.Z) / (C.Y - A.Y);
                 int x2;
-                int z2;
+                double z2;
                 if (sy < (int)B.Y)
                 {
                     x2 = (int)A.X + (sy - (int)A.Y) * ((int)B.X - (int)A.X) / ((int)B.Y - (int)A.Y);
-                    z2 = (int)A.Z + (sy - (int)A.Y) * ((int)B.Z - (int)A.Z) / ((int)B.Y - (int)A.Y);
+                    z2 = A.Z + (sy - A.Y) * (B.Z - A.Z) / (B.Y - A.Y);
                 }
                 else
                 {
                     if ((int)C.Y == (int)B.Y)
                     {
                         x2 = (int)B.X;
-                        z2 = (int)B.Z;
+                        z2 = B.Z;
                     }
                     else
                     {
                         x2 = (int)B.X + (sy - (int)B.Y) * ((int)C.X - (int)B.X) / ((int)C.Y - (int)B.Y);
-                        z2 = (int)B.Z + (sy - (int)B.Y) * ((int)C.Z - (int)B.Z) / ((int)C.Y - (int)B.Y);
+                        z2 = B.Z + (sy - B.Y) * (C.Z - B.Z) / (C.Y - B.Y);
                     }
                 }
                 if (x1 > x2) { int tmp = x1; x1 = x2; x2 = tmp; }
@@ -71,9 +71,9 @@ namespace SimpleRender.Drawing
             var px = x1;
             while (px <= x2)
             {
-                double z = z1 + ((px - x1) * (z2 - z1) / (x2 - x1));
+                double z = 1+z1 + ((px - x1) * (z2 - z1) / (x2 - x1));
 
-                if (zbuffer[px + sy * frameWidth] > z)
+                if (zbuffer[px + sy * frameWidth] < z)
                 {
                     zbuffer[px + sy * frameWidth] = z;
                     SetPixel(image, px, sy, color);

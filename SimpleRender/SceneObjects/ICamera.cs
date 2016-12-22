@@ -19,10 +19,15 @@ namespace SimpleRender.SceneObjects
         private double _halfScreenWidth;
         private double _halfscreenHeight;
 
+        private int _screenWidth;
+        private int _screenHeight;
+
         public Bitmap Image { get; set; }
 
         public Camera(int screenWidth, int screenHeight)
         {
+            _screenWidth = screenWidth;
+            _screenHeight = screenHeight;
             _halfScreenWidth = screenWidth / 2;
             _halfscreenHeight = screenHeight / 2;
             Image = new Bitmap(screenWidth, screenHeight);
@@ -32,6 +37,8 @@ namespace SimpleRender.SceneObjects
         {
             //TransformedVector = TranslationMatrix * RotationMatrix * ScaleMatrix * OriginalVector;
             //MVPmatrix = projection * view * model; 
+
+            double[] zBuffer = new double[_screenWidth * _screenHeight];
 
             var rnd = new Random();
             var cvvMatrix = GetFrustumLeft(75, _halfScreenWidth / _halfscreenHeight, 0.5d, 10000d);
@@ -60,11 +67,16 @@ namespace SimpleRender.SceneObjects
                     var vector2 = transformMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
                     var vector3 = transformMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
 
-                    Draw2D.Triangle(
-                        ConvertToScreenCoord0(ConvertToDecart(vector1)),
-                        ConvertToScreenCoord0(ConvertToDecart(vector2)),
-                        ConvertToScreenCoord0(ConvertToDecart(vector3)),
-                        Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128));
+                    //Draw2D.Triangle(
+                    //    ConvertToScreenCoord0(ConvertToDecart(vector1)),
+                    //    ConvertToScreenCoord0(ConvertToDecart(vector2)),
+                    //    ConvertToScreenCoord0(ConvertToDecart(vector3)),
+                    //    Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128));
+                    Draw3D.Triangle(
+                        ConvertToScreenCoord01(ConvertToDecart(vector1)),
+                        ConvertToScreenCoord01(ConvertToDecart(vector2)),
+                        ConvertToScreenCoord01(ConvertToDecart(vector3)),
+                        Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128), zBuffer);
                 }
             }
         }
@@ -79,6 +91,13 @@ namespace SimpleRender.SceneObjects
             var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
             var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
             return new Point2D((int)screenX, (int)screenY);
+        }
+
+        private Vector3f ConvertToScreenCoord01(Vector3f decart)
+        {
+            var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
+            var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
+            return new Vector3f((float)screenX, (float)screenY, decart.Z);
         }
 
         private Point2D ConvertToScreenCoord1(Vector3f vector)
