@@ -49,7 +49,11 @@ namespace SimpleRender.Drawing
                         z2 = B.Z + (sy - B.Y) * (C.Z - B.Z) / (C.Y - B.Y);
                     }
                 }
-                if (x1 > x2) { int tmp = x1; x1 = x2; x2 = tmp; }
+                if (x1 > x2)
+                {
+                    int tmp = x1; x1 = x2; x2 = tmp;
+                    double tmpZ = z1; z1 = z2; z2 = tmpZ;
+                }
 
                 DrawHorizontalLine(image, sy, x1, x2, z1, z2, color, zbuffer);
             }
@@ -65,19 +69,24 @@ namespace SimpleRender.Drawing
 
             //cut out of screen lines
             if (sy < minY || sy > maxY) return;
-            if (x1 < minX) x1 = minX;
-            if (x2 > maxX) x2 = maxX;
+            if (x1 < minX)
+            {
+                z1 = z1 + ((minX - x1) * (z2 - z1) / (x2 - x1));
+                x1 = minX;
+            }
+            if (x2 > maxX)
+            {
+                z2 = z1 + ((maxX - x1) * (z2 - z1) / (x2 - x1));
+                x2 = maxX;
+            }
 
             var px = x1;
             while (px <= x2)
             {
-                double z = 1+z1 + ((px - x1) * (z2 - z1) / (x2 - x1));
+                double z =/* double.MinValue*/1 + z1 + ((px - x1) * (z2 - z1) / (x2 - x1));
 
-                if (zbuffer[px + sy * frameWidth] < z)
-                {
-                    zbuffer[px + sy * frameWidth] = z;
-                    SetPixel(image, px, sy, color);
-                }
+                SetPixel(image, px, sy, z, color, zbuffer);
+
                 px++;
             }
         }
@@ -89,7 +98,7 @@ namespace SimpleRender.Drawing
             b = tmp;
         }
 
-        private static void SetPixel(Bitmap image, int x, int y, Color color)
+        private static void SetPixel(Bitmap image, int x, int y, double z, Color color, double[] zbuffer)
         {
             var maxX = image.Width - 1;
             var minX = 0;
@@ -99,7 +108,12 @@ namespace SimpleRender.Drawing
             //skip out of scren pixels
             if (x < minX || x > maxX || y < minY || y > maxY) return;
 
-            image.SetPixel(x, y, color);
+            if (zbuffer[x + y * image.Width] < z)
+            {
+                zbuffer[x + y * image.Width] = z;
+                //image.SetPixel(x, y, Color.FromArgb((int)(z * 255), (int)(z * 255), (int)(z * 255)));
+                image.SetPixel(x, y, color);
+            }
         }
     }
 }

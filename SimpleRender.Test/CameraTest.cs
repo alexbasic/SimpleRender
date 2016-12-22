@@ -39,19 +39,19 @@ namespace SimpleRender.Test
                         new Face{Vertex1 = 0, Vertex2 = 3, Vertex3 = 2},
 
                         new Face{Vertex1 = 4, Vertex2 = 5, Vertex3 = 6},
-                        new Face{Vertex1 = 5, Vertex2 = 6, Vertex3 = 7},
+                        new Face{Vertex1 = 4, Vertex2 = 6, Vertex3 = 7},
 
                         new Face{Vertex1 = 0, Vertex2 = 1, Vertex3 = 5},
                         new Face{Vertex1 = 0, Vertex2 = 5, Vertex3 = 4},
 
                         new Face{Vertex1 = 3, Vertex2 = 7, Vertex3 = 2},
-                        new Face{Vertex1 = 7, Vertex2 = 2, Vertex3 = 3},
+                        new Face{Vertex1 = 7, Vertex2 = 6, Vertex3 = 2},
 
                         new Face{Vertex1 = 1, Vertex2 = 6, Vertex3 = 5},
                         new Face{Vertex1 = 1, Vertex2 = 2, Vertex3 = 6},
 
-                        new Face{Vertex1 = 0, Vertex2 = 7, Vertex3 = 3},
-                        new Face{Vertex1 = 0, Vertex2 = 4, Vertex3 = 7},
+                        new Face{Vertex1 = 0, Vertex2 = 4, Vertex3 = 3},
+                        new Face{Vertex1 = 4, Vertex2 = 7, Vertex3 = 3},
                     },
                     Position = new Vertex() { X = 0, Y = 0, Z = 2}
             };
