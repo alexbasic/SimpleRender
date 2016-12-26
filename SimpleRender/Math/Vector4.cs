@@ -10,7 +10,6 @@ namespace SimpleRender.Math
     {
         public Vector4()
         {
-
         }
 
         public Vector4(float x, float y, float z, float w)

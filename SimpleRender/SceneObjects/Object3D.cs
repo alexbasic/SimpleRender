@@ -7,16 +7,15 @@ using System.Threading.Tasks;
 
 namespace SimpleRender.SceneObjects
 {
-    public class Object3D
+    public class Object3D : Primitive
     {
         public Object3D() 
         {
-            Rotation = new Vector3f();
+            Rotation = new Vector4();
         }
 
 
-        public Vertex Position { get; set; }
-        public Vector3f Rotation { get; set; }
+        
         public Vertex[] Vertices { get; set; }
         public ICollection<Vertex> TextureVertices { get; set; }
         public ICollection<Vertex> Normals { get; set; }
