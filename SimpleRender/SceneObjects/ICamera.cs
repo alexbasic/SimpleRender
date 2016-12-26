@@ -73,11 +73,19 @@ namespace SimpleRender.SceneObjects
                     double intensity = Math3D.DotProduct(n, viewDirection);
                     if (intensity <= 0) continue;
 
+                    var lightDirection = new Vector3f(1,1,1);
+                    lightDirection = lightDirection.Normalize();
+                    double illuminationIntensity = Math3D.DotProduct(n, lightDirection);
+                    if (illuminationIntensity < 0) illuminationIntensity = 0;
+                    if (illuminationIntensity > 1) illuminationIntensity = 1d;
                         Draw3D.Triangle(
                             ConvertToScreenCoord01(ConvertToDecart(vector1)),
                             ConvertToScreenCoord01(ConvertToDecart(vector2)),
                             ConvertToScreenCoord01(ConvertToDecart(vector3)),
-                            Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128), zBuffer);
+                            Image, 
+                            //Color.FromArgb(rnd.Next((int)(255 * illuminationIntensity)), rnd.Next((int)(255 * illuminationIntensity)), 128),
+                            Color.FromArgb((int)(255 * illuminationIntensity), (int)(255 * illuminationIntensity), 50),
+                            zBuffer);
                 }
             }
         }

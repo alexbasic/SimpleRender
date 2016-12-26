@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SimpleRender.Math;
 
 namespace SimpleRender.Test
 {
@@ -53,7 +54,7 @@ namespace SimpleRender.Test
                         new Face{Vertex1 = 0, Vertex2 = 4, Vertex3 = 3},
                         new Face{Vertex1 = 4, Vertex2 = 7, Vertex3 = 3},
                     },
-                    Position = new Vertex() { X = 0, Y = 0, Z = 1.25f}
+                    Position = new Vector4() { X = 0, Y = 0, Z = 1.25f, W = 1d}
             };
             scene.Objects = new List<Object3D>
             {
