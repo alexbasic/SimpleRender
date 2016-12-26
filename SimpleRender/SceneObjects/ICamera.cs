@@ -67,16 +67,17 @@ namespace SimpleRender.SceneObjects
                     var vector2 = transformMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
                     var vector3 = transformMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
 
-                    //Draw2D.Triangle(
-                    //    ConvertToScreenCoord0(ConvertToDecart(vector1)),
-                    //    ConvertToScreenCoord0(ConvertToDecart(vector2)),
-                    //    ConvertToScreenCoord0(ConvertToDecart(vector3)),
-                    //    Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128));
-                    Draw3D.Triangle(
-                        ConvertToScreenCoord01(ConvertToDecart(vector1)),
-                        ConvertToScreenCoord01(ConvertToDecart(vector2)),
-                        ConvertToScreenCoord01(ConvertToDecart(vector3)),
-                        Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128), zBuffer);
+                    Vector3f n = SimpleRender.Math.Vector3f.CrossProductLeft((vector3 - vector1), (vector2 - vector1));
+                    n = n.Normalize();
+                    var viewDirection = new Vector3f(0,0,1);
+                    double intensity = Math3D.DotProduct(n, viewDirection);
+                    if (intensity <= 0) continue;
+
+                        Draw3D.Triangle(
+                            ConvertToScreenCoord01(ConvertToDecart(vector1)),
+                            ConvertToScreenCoord01(ConvertToDecart(vector2)),
+                            ConvertToScreenCoord01(ConvertToDecart(vector3)),
+                            Image, Color.FromArgb(rnd.Next(255), rnd.Next(255), 128), zBuffer);
                 }
             }
         }
