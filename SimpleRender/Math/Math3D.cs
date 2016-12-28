@@ -65,21 +65,24 @@ namespace SimpleRender.Math
 
         public static double DotProduct(Vector4 a, Vector4 b)
         {
-            return a.X * b.X + a.Y + b.Y + a.Z * b.Z + a.W * b.W;
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W;
         }
 
         public static double DotProduct(Vector3f a, Vector3f b)
         {
-            return a.X * b.X + a.Y + b.Y + a.Z * b.Z;
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
         }
 
-        /// <param name="eye">camera position</param>
-        /// <param name="center">camera target</param>
-        /// <param name="up">camera up</param>
-        public static Matrix GetViewMatrix(Vector3f eye, Vector3f center, Vector3f up)
+        public static Matrix GetViewMatrix(Vector3f position, Vector3f target)
         {
-            var zaxis = (eye - center).Normalize();
+            //direction
+            var zaxis = (position - target).Normalize();
+
+            var up = Vector3f.CrossProduct(zaxis, new Vector3f(1.0f, 0.0f, 0.0f));
+
+            //camera right
             var xaxis = Vector3f.CrossProduct(up, zaxis).Normalize();
+            //camera up
             var yaxis = Vector3f.CrossProduct(zaxis, xaxis).Normalize();
             //var Minv = Matrix.Identity();
             //var Tr = Matrix.Identity();
@@ -105,10 +108,11 @@ namespace SimpleRender.Math
                     zaxis.X, zaxis.Y, zaxis.Z, 0,
                     0, 0, 0, 1
                 );
+
             var camTranslationMatrix = new Matrix(
-                    1, 0, 0, -eye.X,
-                    0, 1, 0, -eye.Y,
-                    0, 0, 1, -eye.Z,
+                    1, 0, 0, -position.X,
+                    0, 1, 0, -position.Y,
+                    0, 0, 1, -position.Z,
                     0, 0, 0, 1
                 );
 
