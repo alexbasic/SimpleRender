@@ -56,9 +56,37 @@ namespace SimpleRender.Test
                     },
                     Position = new Vector4() { X = 0, Y = 0, Z = 1.25f, W = 1d}
             };
+            var pyramid =
+                new Object3D
+                {
+                    Vertices = new List<Vertex>
+                    {
+                        new Vertex{Number = 0, X = -0.5f, Y = -0.5f, Z = -0.5f},
+                        new Vertex{Number = 1, X = -0.5f, Y = -0.5f, Z = 0.5f},
+
+                        new Vertex{Number = 2, X = 0f, Y = 0.5f, Z = 0f},
+
+                        new Vertex{Number = 3, X = 0.5f, Y = -0.5f, Z = -0.5f},
+                        new Vertex{Number = 4, X = 0.5f, Y = -0.5f, Z = 0.5f}
+                    }.ToArray(),
+                    Faces = new List<Face>
+                    {
+                        new Face{Vertex1 = 0, Vertex2 = 1, Vertex3 = 2},
+                        new Face{Vertex1 = 3, Vertex2 = 2, Vertex3 = 4},
+
+                        new Face{Vertex1 = 0, Vertex2 = 2, Vertex3 = 3},
+                        new Face{Vertex1 = 1, Vertex2 = 4, Vertex3 = 2},
+
+                        new Face{Vertex1 = 0, Vertex2 = 3, Vertex3 = 1},
+                        new Face{Vertex1 = 3, Vertex2 = 4, Vertex3 = 1}
+                    },
+                    Position = new Vector4() { X = 1.25f, Y = 0, Z = 1.25f, W = 1d },
+                    //Rotation = new Vector4(0f, 1f, 0f, 0f)
+                };
             scene.Objects = new List<Object3D>
             {
-                cube
+                cube,
+                pyramid
             };
 
             var form = new TestForm();
