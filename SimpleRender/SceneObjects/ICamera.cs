@@ -71,7 +71,7 @@ namespace SimpleRender.SceneObjects
                     n = n.Normalize();
                     var viewDirection = new Vector3f(0,0,1);
                     double intensity = Math3D.DotProduct(n, viewDirection);
-                    if (intensity <= 0) continue;
+                    if (intensity > 0) continue;
 
                     var lightDirection = new Vector3f(1,1,1);
                     lightDirection = lightDirection.Normalize();
@@ -160,11 +160,11 @@ namespace SimpleRender.SceneObjects
 
             var fovy = fovyInDegree / System.Math.PI;
 
-            if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
+           // if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
             var matrix = new Matrix(
                 Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
                 0, Math3D.Cotan(fovy / 2), 0, 0,
-                0, 0, (far + near) / (far - near), 1,
+                0, 0, -(far + near) / (far - near), -1,
                 0, 0, (-2 * far * near) / (far - near), 0
                 );
             return matrix;
