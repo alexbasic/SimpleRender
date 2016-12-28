@@ -41,7 +41,7 @@ namespace SimpleRender.SceneObjects
             double[] zBuffer = new double[_screenWidth * _screenHeight];
 
             var rnd = new Random();
-            var cvvMatrix = GetFrustumLeft(75, _halfScreenWidth / _halfscreenHeight, 0.5d, 10000d);
+            var cvvMatrix = GetFrustumLeft(45, _halfScreenWidth / _halfscreenHeight, 0.5d, 10000d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
