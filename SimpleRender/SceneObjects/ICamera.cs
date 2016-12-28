@@ -41,7 +41,7 @@ namespace SimpleRender.SceneObjects
             double[] zBuffer = new double[_screenWidth * _screenHeight];
 
             var rnd = new Random();
-            var cvvMatrix = GetFrustumLeft(45, _halfScreenWidth / _halfscreenHeight, 0.5d, 10000d);
+            var cvvMatrix = GetFrustumLeft(45, _halfScreenWidth / _halfscreenHeight, 0.3d, 10000d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
@@ -53,7 +53,7 @@ namespace SimpleRender.SceneObjects
 
                 var scaleMatrix = Math3D.GetScaleMatrix(1, 1, 1);
                 var modelMatrix = translationMatrix * (rotationMatrix * scaleMatrix);
-                var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0, -0.8f, -0.4f), new Vector3f(0, -0.3f, 0.3f), new Vector3f(0, 1, 0));
+                var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0, -0.65f, -1f), new Vector3f(0, 0f, 0f));
 
                 var transformMatrix = cvvMatrix * viewMatrix * modelMatrix;
 
@@ -126,25 +126,6 @@ namespace SimpleRender.SceneObjects
             var screenX = _halfScreenWidth + vector.X * fov / vector.Z;
             var screenY = _halfscreenHeight - vector.Y * fov / vector.Z;
             return new Point2D((int)screenX, (int)screenY);
-        }
-
-        private Vector3f[] CalculatePQR(Vector3f target, Vector3f location, double fov)
-        {
-            var p = target - location;
-            Vector3f q = null;
-            if (p.X == 0 && p.Z == 0)
-            {
-                q = new Vector3f(0, 0, 1);
-            }
-            else
-            {
-                q = new Vector3f(p.Z, 0, -p.X);
-            };
-            var r = Vector3f.CrossProduct(p, q);
-            var lp = p.Length();
-            //5. Приводим r и q к длине
-            //2*lp*System.Math.Tan(fov/2);
-            return null;
         }
 
         //Creates viewport matrix
