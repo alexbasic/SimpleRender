@@ -83,24 +83,36 @@ namespace SimpleRender.SceneObjects
                     double intensity = Math3D.DotProduct(faceNormalInProjectionCoord, viewDirection);
                     if (intensity <= 0) continue;
 
-                    var globalLightPosition = new Vector3f(1, -1, -1);
+                    var globalLightPosition = new Vector3f(1, 1, -1);
                     globalLightPosition = globalLightPosition.Normalize();
                     double illuminationIntensity = Math3D.DotProduct(faceNormalInWorldCoord, globalLightPosition);
                     if (illuminationIntensity < 0) illuminationIntensity = 0;
                     if (illuminationIntensity > 1) illuminationIntensity = 1d;
 
-                    var sampleColor = scene.AmbientColor + primitive.Mategial.Color
-                        primitive.Mategial.Color * illuminationIntensity;
+                    //ambient = Ka,
+//diffuse = Kd * cos(N, L),
+//specular = Ks * pow(cos(R, V), Ns),
+//intensity = ambient + amp * (diffuse + specular).
+
+                    var sampleColor = scene.AmbientColor + (
+                        primitive.Mategial.DiffuseColor * illuminationIntensity) * scene.LightSources.First().Intensity;
 
                         Draw3D.Triangle(
                             ConvertToScreenCoord01(decartvector1),
                             ConvertToScreenCoord01(decartvector2),
                             ConvertToScreenCoord01(decartvector3),
-                            Image, 
-                            Color.FromArgb((int)(255 * illuminationIntensity), (int)(255 * illuminationIntensity), 128),
+                            Image,
+                            Color.FromArgb((int)(255 * Restrict(sampleColor.X)), (int)(255 * Restrict(sampleColor.Y)), (int)(255 * Restrict(sampleColor.Z))),
                             zBuffer);
                 }
             }
+        }
+
+        private float Restrict(float x) 
+        {
+            if (x > 1f) return 1f;
+            if (x < 0f) return 0f;
+            return x;
         }
 
         private Vector3f ConvertToDecart(Vector4 vector)
@@ -177,7 +189,7 @@ namespace SimpleRender.SceneObjects
             var matrix = new Matrix(
                 Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
                 0, Math3D.Cotan(fovy / 2), 0, 0,
-                0, 0, -(far + near) / (far - near), -1,
+                0, 0, (far + near) / (far - near), 1,
                 0, 0, (-2 * far * near) / (far - near), 0
                 );
             return matrix;

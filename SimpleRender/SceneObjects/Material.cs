@@ -12,7 +12,7 @@ namespace SimpleRender.SceneObjects
     {
         public Material()
         {
-            Color = new Vector4();
+            DiffuseColor = new Vector4();
         }
 
         public Vector4 DiffuseColor { get; set; }
