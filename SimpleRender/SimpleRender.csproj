@@ -57,14 +57,14 @@
     <Compile Include="SceneObjects\LightSource.cs" />
     <Compile Include="SceneObjects\Material.cs" />
     <Compile Include="SceneObjects\Object3D.cs" />
-    <Compile Include="SceneObjects\Point2D.cs" />
+    <Compile Include="Math\Point2D.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneObjects\Primitive.cs" />
     <Compile Include="SceneObjects\Scene.cs" />
     <Compile Include="Drawing\UnsafeBitmap.cs" />
     <Compile Include="Math\Vector3f.cs" />
-    <Compile Include="SceneObjects\Vertex.cs" />
+    <Compile Include="Math\Vertex.cs" />
     <Compile Include="SceneObjects\WaveForm.cs" />
   </ItemGroup>
   <ItemGroup>

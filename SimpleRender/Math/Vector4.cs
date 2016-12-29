@@ -21,5 +21,10 @@ namespace SimpleRender.Math
         }
 
         public double W { get; set; }
+
+        public static Vector4 operator *(Vector4 a, double b)
+        {
+            return new Vector4 { X = (float)(a.X * b), Y = (float)(a.Y * b), Z = (float)(a.Z * b), W = a.W * b };
+        }
     }
 }

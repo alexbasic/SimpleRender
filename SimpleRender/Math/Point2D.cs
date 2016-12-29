@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleRender.SceneObjects
+namespace SimpleRender.Math
 {
     public class Point2D
     {
