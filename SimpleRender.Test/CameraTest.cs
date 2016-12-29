@@ -55,7 +55,7 @@ namespace SimpleRender.Test
                         new Face{Vertex1 = 4, Vertex2 = 7, Vertex3 = 3},
                     },
                     Position = new Vector4() { X = 0, Y = 0, Z = 1.25f, W = 1d },
-                    Mategial = new Material() { Color = new Vector4(1, 0, 0, 1) }
+                    Mategial = new Material() { DiffuseColor = new Vector4(1, 0, 0, 1) }
                 };
             var pyramid =
                 new Object3D
@@ -81,15 +81,16 @@ namespace SimpleRender.Test
                         new Face{Vertex1 = 0, Vertex2 = 3, Vertex3 = 1},
                         new Face{Vertex1 = 3, Vertex2 = 4, Vertex3 = 1}
                     },
-                    Position = new Vector4() { X = 1.25f, Y = 0, Z = 1.25f, W = 1d },
-                    Mategial = new Material() { Color = new Vector4(0, 1, 0, 1) }
+                    Position = new Vector4() { X = 0.7f, Y = 0, Z = 1.25f, W = 1d },
+                    Mategial = new Material() { DiffuseColor = new Vector4(0, 1, 0, 1) }
                 };
             scene.Objects = new List<Object3D>
             {
-                cube,
-                pyramid
+                pyramid,
+                cube
             };
-            scene.LightSources.Add(new GlobalLightSource() { Color = new Vector4(1, 0.9f, 0.5f, 1), Intensity = 1f, Position = new Vector4(1, 1, 1, 1) });
+            scene.LightSources =new List<LightSource>{new GlobalLightSource() { Color = new Vector4(1, 0.9f, 0.5f, 1), Intensity = 1f, Position = new Vector4(1, 1, 1, 1) 
+            }};
             scene.AmbientColor = new Vector4(0, 0, 0.3f, 0);
 
             var form = new TestForm();

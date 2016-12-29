@@ -1,4 +1,5 @@
-﻿using SimpleRender.SceneObjects;
+﻿using SimpleRender.Math;
+using SimpleRender.SceneObjects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
