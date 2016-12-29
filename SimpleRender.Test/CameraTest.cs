@@ -16,10 +16,10 @@ namespace SimpleRender.Test
     {
         [Test]
         [STAThread]
-        public void TestDrawCamera() 
+        public void TestDrawCamera()
         {
             var scene = new Scene();
-            var cube = 
+            var cube =
                 new Object3D
                 {
                     Vertices = new List<Vertex>
@@ -54,8 +54,9 @@ namespace SimpleRender.Test
                         new Face{Vertex1 = 0, Vertex2 = 4, Vertex3 = 3},
                         new Face{Vertex1 = 4, Vertex2 = 7, Vertex3 = 3},
                     },
-                    Position = new Vector4() { X = 0, Y = 0, Z = 1.25f, W = 1d}
-            };
+                    Position = new Vector4() { X = 0, Y = 0, Z = 1.25f, W = 1d },
+                    Mategial = new Material() { Color = new Vector4(1, 0, 0, 1) }
+                };
             var pyramid =
                 new Object3D
                 {
@@ -81,16 +82,18 @@ namespace SimpleRender.Test
                         new Face{Vertex1 = 3, Vertex2 = 4, Vertex3 = 1}
                     },
                     Position = new Vector4() { X = 1.25f, Y = 0, Z = 1.25f, W = 1d },
-                    //Rotation = new Vector4(0f, 1f, 0f, 0f)
+                    Mategial = new Material() { Color = new Vector4(0, 1, 0, 1) }
                 };
             scene.Objects = new List<Object3D>
             {
                 cube,
                 pyramid
             };
+            scene.LightSources.Add(new GlobalLightSource() { Color = new Vector4(1, 0.9f, 0.5f, 1), Intensity = 1f, Position = new Vector4(1, 1, 1, 1) });
+            scene.AmbientColor = new Vector4(0, 0, 0.3f, 0);
 
             var form = new TestForm();
-            form.ClientSize = new Size(320,240);
+            form.ClientSize = new Size(320, 240);
             var t = new Timer();
 
             t.Interval = 250;

@@ -89,6 +89,8 @@ namespace SimpleRender.SceneObjects
                     if (illuminationIntensity < 0) illuminationIntensity = 0;
                     if (illuminationIntensity > 1) illuminationIntensity = 1d;
 
+                    var sampleColor = primitive.Mategial.Color * illuminationIntensity;
+
                         Draw3D.Triangle(
                             ConvertToScreenCoord01(decartvector1),
                             ConvertToScreenCoord01(decartvector2),
