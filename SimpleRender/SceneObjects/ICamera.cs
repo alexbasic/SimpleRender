@@ -55,7 +55,7 @@ namespace SimpleRender.SceneObjects
                 var modelMatrix = translationMatrix * (rotationMatrix * scaleMatrix);
                 var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0, -0.65f, -1f), new Vector3f(0, 0f, 0f));
 
-                var transformMatrix = cvvMatrix * viewMatrix * modelMatrix;
+                var transformMatrix = cvvMatrix*viewMatrix;// * modelMatrix;
 
                 foreach (var triangle in primitive.Faces)
                 {
@@ -63,28 +63,38 @@ namespace SimpleRender.SceneObjects
                     var v2 = primitive.Vertices[triangle.Vertex2];
                     var v3 = primitive.Vertices[triangle.Vertex3];
 
-                    var vector1 = transformMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
-                    var vector2 = transformMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
-                    var vector3 = transformMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
+                    var worldCoord1 = modelMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
+                    var worldCoord2 = modelMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
+                    var worldCoord3 = modelMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
 
-                    Vector3f n = SimpleRender.Math.Vector3f.CrossProductLeft((vector3 - vector1), (vector2 - vector1));
-                    n = n.Normalize();
-                    var viewDirection = new Vector3f(0,0,1);
-                    double intensity = Math3D.DotProduct(n, viewDirection);
-                    if (intensity > 0) continue;
+                    var vector1 = transformMatrix * worldCoord1;
+                    var vector2 = transformMatrix * worldCoord2;
+                    var vector3 = transformMatrix * worldCoord3;
 
-                    var lightDirection = new Vector3f(1,1,1);
-                    lightDirection = lightDirection.Normalize();
-                    double illuminationIntensity = Math3D.DotProduct(n, lightDirection);
+                    var decartvector1 = ConvertToDecart(vector1);
+                    var decartvector2 = ConvertToDecart(vector2);
+                    var decartvector3 = ConvertToDecart(vector3);
+
+                    Vector3f faceNormalInWorldCoord = SimpleRender.Math.Vector3f.CrossProductLeft((ConvertToDecart(worldCoord3) - ConvertToDecart(worldCoord1)), (ConvertToDecart(worldCoord2) - ConvertToDecart(worldCoord1)));
+
+                    Vector3f faceNormalInProjectionCoord = SimpleRender.Math.Vector3f.CrossProductLeft((ConvertToDecart(vector3) - ConvertToDecart(vector1)), (ConvertToDecart(vector2) - ConvertToDecart(vector1)));
+                    faceNormalInProjectionCoord = faceNormalInProjectionCoord.Normalize();
+                    var viewDirection = new Vector4(0,0,1, 1);
+                    double intensity = Math3D.DotProduct(faceNormalInProjectionCoord, viewDirection);
+                    if (intensity <= 0) continue;
+
+                    var globalLightPosition = new Vector3f(1, -1, -1);
+                    globalLightPosition = globalLightPosition.Normalize();
+                    double illuminationIntensity = Math3D.DotProduct(faceNormalInWorldCoord, globalLightPosition);
                     if (illuminationIntensity < 0) illuminationIntensity = 0;
                     if (illuminationIntensity > 1) illuminationIntensity = 1d;
+
                         Draw3D.Triangle(
-                            ConvertToScreenCoord01(ConvertToDecart(vector1)),
-                            ConvertToScreenCoord01(ConvertToDecart(vector2)),
-                            ConvertToScreenCoord01(ConvertToDecart(vector3)),
+                            ConvertToScreenCoord01(decartvector1),
+                            ConvertToScreenCoord01(decartvector2),
+                            ConvertToScreenCoord01(decartvector3),
                             Image, 
-                            //Color.FromArgb(rnd.Next((int)(255 * illuminationIntensity)), rnd.Next((int)(255 * illuminationIntensity)), 128),
-                            Color.FromArgb((int)(255 * illuminationIntensity), (int)(255 * illuminationIntensity), 50),
+                            Color.FromArgb((int)(255 * illuminationIntensity), (int)(255 * illuminationIntensity), 128),
                             zBuffer);
                 }
             }
