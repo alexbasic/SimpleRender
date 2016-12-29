@@ -53,7 +53,7 @@ namespace SimpleRender.SceneObjects
 
                 var scaleMatrix = Math3D.GetScaleMatrix(1, 1, 1);
                 var modelMatrix = translationMatrix * (rotationMatrix * scaleMatrix);
-                var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0, -0.65f, -1f), new Vector3f(0, 0f, 0f));
+                var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0, 0.65f, -1f), new Vector3f(0, 0f, 0f));
 
                 var transformMatrix = cvvMatrix*viewMatrix;// * modelMatrix;
 
@@ -115,7 +115,7 @@ namespace SimpleRender.SceneObjects
         private Vector3f ConvertToScreenCoord01(Vector3f decart)
         {
             var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
-            var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
+            var screenY = _halfscreenHeight + _halfscreenHeight * decart.Y;
             return new Vector3f((float)screenX, (float)screenY, decart.Z);
         }
 
