@@ -15,6 +15,8 @@ namespace SimpleRender.SceneObjects
             Color = new Vector4();
         }
 
-        public Vector4 Color { get; set; }
+        public Vector4 DiffuseColor { get; set; }
+        public Vector4 AmbientColor { get; set; }
+        public Vector4 SpecularColor { get; set; }
     }
 }
