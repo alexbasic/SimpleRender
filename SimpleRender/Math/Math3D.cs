@@ -58,9 +58,16 @@ namespace SimpleRender.Math
                 0, 0, 0, 1);
         }
 
+        //TODO проверить правильность
         public static double Cotan(double x)
         {
             return 1 / Math.Tan(x);
+        }
+
+        //TODO Проверить правильность
+        public static double ArcCotan(double x)
+        {
+            return Math.Atan(-x) + Math.PI / 2;
         }
 
         public static double DotProduct(Vector4 a, Vector4 b)
@@ -117,6 +124,23 @@ namespace SimpleRender.Math
                 );
 
             return camRotationMatrix * camTranslationMatrix;
+        }
+
+        public static double CalculateAngle(double size, double distance)
+        {
+            double radtheta = 2.0 * Math.Atan2(size / 2.0, distance);
+            double degtheta = RadToDeg(radtheta);
+            return degtheta;
+        }
+
+        public static double RadToDeg(double radtheta)
+        {
+            return (180.0d * radtheta) / Math.PI;
+        }
+
+        public static double DegToRad(double gradtheta)
+        {
+            return (Math.PI * gradtheta) / 180.0d;
         }
     }
 }

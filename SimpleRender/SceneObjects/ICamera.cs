@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using SimpleRender.Drawing;
 using SimpleRender.Math;
 
@@ -41,7 +42,8 @@ namespace SimpleRender.SceneObjects
             double[] zBuffer = new double[_screenWidth * _screenHeight];
 
             var rnd = new Random();
-            var cvvMatrix = GetFrustumLeft(45, _halfScreenWidth / _halfscreenHeight, 0.3d, 10000d);
+            //var cvvMatrix = GetFrustumLeft(45, _halfScreenWidth / _halfscreenHeight, 0.3d, 10000d);
+            var cvvMatrix = GetFrustumLeft2(0, 1, 0, 1, 1d, 10000d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
@@ -98,9 +100,9 @@ namespace SimpleRender.SceneObjects
                         primitive.Mategial.DiffuseColor * illuminationIntensity) * scene.LightSources.First().Intensity;
 
                         Draw3D.Triangle(
-                            ConvertToScreenCoord01(decartvector1),
-                            ConvertToScreenCoord01(decartvector2),
-                            ConvertToScreenCoord01(decartvector3),
+                            ConvertToScreenCoord0(decartvector1),
+                            ConvertToScreenCoord0(decartvector2),
+                            ConvertToScreenCoord0(decartvector3),
                             Image,
                             Color.FromArgb((int)(255 * Restrict(sampleColor.X)), (int)(255 * Restrict(sampleColor.Y)), (int)(255 * Restrict(sampleColor.Z))),
                             zBuffer);
@@ -120,17 +122,18 @@ namespace SimpleRender.SceneObjects
             return new Vector3f(vector.X / (float)vector.W, vector.Y / (float)vector.W, vector.Z / (float)vector.W);
         }
 
-        private Point2D ConvertToScreenCoord0(Vector3f decart)
-        {
-            var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
-            var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
-            return new Point2D((int)screenX, (int)screenY);
-        }
-
-        private Vector3f ConvertToScreenCoord01(Vector3f decart)
+        private Vector3f ConvertToScreenCoord0(Vector3f decart)
         {
             var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
             var screenY = _halfscreenHeight + _halfscreenHeight * decart.Y;
+            return new Vector3f((float)screenX, (float)screenY, decart.Z);
+        }
+
+        private Vector3f ConvertToScreenCoord01(Vector3f decart, double far, double near)
+        {
+            var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
+            var screenY = _halfscreenHeight + _halfscreenHeight * decart.Y;
+            var screenZ = (far-near)/2*decart.Z;
             return new Vector3f((float)screenX, (float)screenY, decart.Z);
         }
 
@@ -153,18 +156,18 @@ namespace SimpleRender.SceneObjects
             return new Point2D((int)screenX, (int)screenY);
         }
 
-        //Creates viewport matrix
-        /// <summary>
-        /// Rightside-coordinate frustum
-        /// </summary>
-        private Matrix GetFrustumRight(double left, double right, double bottom, double top, double near, double far)
+        private Matrix GetFrustum(double left, double right, double bottom, double top, double near, double far)
         {
-            if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
+            var a = (right + left)/(right - left);
+            var b = (top + bottom)/(top - bottom);
+            var c = (far + near)/(far - near);
+            var d = (-2*far*near)/(far - near);
+
             var matrix = new Matrix(
-                2 * near / (right - left), 0, (right + left) / (right - left), 0,
-                0, 2 * near / (top - bottom), (top + bottom) / (top - bottom), 0,
-                0, 0, -1 * (far + near) / (far - near), -1 * (2 * far * near) / (far - near),
-                0, 0, -1, 0
+                2 * near / (right - left), 0, 0, 0,
+                0, 2 * near / (top - bottom), 0, 0,
+                a, b, c, 1,
+                0, 0, d, 0
                 );
             return matrix;
         }
@@ -177,7 +180,7 @@ namespace SimpleRender.SceneObjects
         /// <param name="near">near</param>
         /// <param name="far">far</param>
         /// <returns>frustum matrix</returns>
-        private Matrix GetFrustumLeft(double fovyInDegree, double aspect, double near, double far)
+        private Matrix GetPerspectiveMatrix(double fovyInDegree, double aspect, double near, double far)
         {
             //2n/h = ctg(fovy/2)
             //aspect = w/h
@@ -185,13 +188,23 @@ namespace SimpleRender.SceneObjects
 
             var fovy = fovyInDegree / System.Math.PI;
 
-           // if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
+            if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
             var matrix = new Matrix(
                 Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
                 0, Math3D.Cotan(fovy / 2), 0, 0,
                 0, 0, (far + near) / (far - near), 1,
                 0, 0, (-2 * far * near) / (far - near), 0
                 );
+            return matrix;
+        }
+
+        private Matrix GetPerspectiveMatrix2(double projectionHeight, double aspect, double near, double far)
+        {
+            //TODO проверить это
+            //var fovyInDegree = Math3D.ArcCotan((2*near/projectionHeight)*2);
+            var fovyInDegree = Math3D.CalculateAngle(projectionHeight, near);
+
+            var matrix = GetPerspectiveMatrix(fovyInDegree, aspect, near, far);
             return matrix;
         }
     }
