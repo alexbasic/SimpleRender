@@ -85,19 +85,35 @@ namespace SimpleRender.SceneObjects
                     double intensity = Math3D.DotProduct(faceNormalInProjectionCoord, viewDirection);
                     if (intensity <= 0) continue;
 
-                    var globalLightPosition = new Vector3f(1, 1, -1);
-                    globalLightPosition = globalLightPosition.Normalize();
-                    double illuminationIntensity = Math3D.DotProduct(faceNormalInWorldCoord, globalLightPosition);
-                    if (illuminationIntensity < 0) illuminationIntensity = 0;
-                    if (illuminationIntensity > 1) illuminationIntensity = 1d;
-
                     //ambient = Ka,
 //diffuse = Kd * cos(N, L),
 //specular = Ks * pow(cos(R, V), Ns),
 //intensity = ambient + amp * (diffuse + specular).
 
-                    var sampleColor = scene.AmbientColor + (
-                        primitive.Mategial.DiffuseColor * illuminationIntensity) * scene.LightSources.First().Intensity;
+                    //-----------------
+                    //http://www.gamedev.ru/code/articles/HLSL?page=4
+                    //Lighting:
+                    //Lambert (ambient lighting)
+                    //Diffuse (diffuse lighting model)
+                    //Phong (specular lighting model), Blinn (blinn specular lighting model)
+                    //Sum of this
+
+                    //Реалистичное освещение на основе Кука-Торренса
+
+                    //-------------
+
+                    var ligthSource = scene.LightSources.First();
+                    var globalLightPosition = ligthSource.Position.Normalize();
+
+                    double illuminationIntensity = Math3D.DotProduct(faceNormalInWorldCoord, globalLightPosition);
+                    var diffuseColor = new Vector4(
+                        primitive.Mategial.DiffuseColor.X * ligthSource.Color.X, 
+                        primitive.Mategial.DiffuseColor.Y * ligthSource.Color.Y, 
+                        primitive.Mategial.DiffuseColor.Z * ligthSource.Color.Z, 
+                        1) 
+                        * illuminationIntensity;
+
+                    var sampleColor = scene.AmbientColor + diffuseColor * ligthSource.Intensity;
 
                         Draw3D.Triangle(
                             ConvertToScreenCoord0(decartvector1),
