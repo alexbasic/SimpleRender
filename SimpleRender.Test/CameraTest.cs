@@ -89,7 +89,7 @@ namespace SimpleRender.Test
                 pyramid,
                 cube
             };
-            scene.LightSources =new List<LightSource>{new GlobalLightSource() { Color = new Vector4(1, 0.9f, 0.5f, 1), Intensity = 1f, Position = new Vector4(1, 1, 1, 1) 
+            scene.LightSources =new List<LightSource>{new GlobalLightSource() { Color = new Vector4(1, 0.9f, 0.65f, 1), Intensity = 1f, Position = new Vector4(1, 1, -1, 1) 
             }};
             scene.AmbientColor = new Vector4(0, 0, 0.3f, 0);
 
