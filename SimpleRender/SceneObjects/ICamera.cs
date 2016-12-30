@@ -42,8 +42,7 @@ namespace SimpleRender.SceneObjects
             double[] zBuffer = new double[_screenWidth * _screenHeight];
 
             var rnd = new Random();
-            //var cvvMatrix = GetFrustumLeft(45, _halfScreenWidth / _halfscreenHeight, 0.3d, 10000d);
-            var cvvMatrix = GetFrustumLeft2(0, 1, 0, 1, 1d, 10000d);
+            var cvvMatrix = GetPerspectiveMatrix(120, _halfScreenWidth / _halfscreenHeight, 0.3d, 10000d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
@@ -186,7 +185,7 @@ namespace SimpleRender.SceneObjects
             //aspect = w/h
             //2n/w = ctg(fovy/2)/aspect
 
-            var fovy = fovyInDegree / System.Math.PI;
+            var fovy = Math3D.DegToRad(fovyInDegree);
 
             if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
             var matrix = new Matrix(
