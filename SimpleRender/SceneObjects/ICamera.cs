@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -42,7 +43,7 @@ namespace SimpleRender.SceneObjects
             double[] zBuffer = new double[_screenWidth * _screenHeight];
 
             var rnd = new Random();
-            var cvvMatrix = GetPerspectiveMatrix(120, _halfScreenWidth / _halfscreenHeight, 0.3d, 10000d);
+            var cvvMatrix = Math3D.GetPerspectiveMatrix(120, _halfScreenWidth / _halfscreenHeight, 0.3d, 10000d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
@@ -72,13 +73,13 @@ namespace SimpleRender.SceneObjects
                     var vector2 = transformMatrix * worldCoord2;
                     var vector3 = transformMatrix * worldCoord3;
 
-                    var decartvector1 = ConvertToDecart(vector1);
-                    var decartvector2 = ConvertToDecart(vector2);
-                    var decartvector3 = ConvertToDecart(vector3);
+                    var decartvector1 = Math3D.ConvertToDecart(vector1);
+                    var decartvector2 = Math3D.ConvertToDecart(vector2);
+                    var decartvector3 = Math3D.ConvertToDecart(vector3);
 
-                    Vector3f faceNormalInWorldCoord = SimpleRender.Math.Vector3f.CrossProductLeft((ConvertToDecart(worldCoord3) - ConvertToDecart(worldCoord1)), (ConvertToDecart(worldCoord2) - ConvertToDecart(worldCoord1)));
+                    Vector3f faceNormalInWorldCoord = Math3D.CalculateNormal(Math3D.ConvertToDecart(worldCoord1), Math3D.ConvertToDecart(worldCoord2), Math3D.ConvertToDecart(worldCoord3));
 
-                    Vector3f faceNormalInProjectionCoord = SimpleRender.Math.Vector3f.CrossProductLeft((ConvertToDecart(vector3) - ConvertToDecart(vector1)), (ConvertToDecart(vector2) - ConvertToDecart(vector1)));
+                    Vector3f faceNormalInProjectionCoord = SimpleRender.Math.Vector3f.CrossProductLeft((decartvector3 - decartvector1), (decartvector2 - decartvector1));
                     faceNormalInProjectionCoord = faceNormalInProjectionCoord.Normalize();
                     var viewDirection = new Vector4(0,0,1, 1);
                     double intensity = Math3D.DotProduct(faceNormalInProjectionCoord, viewDirection);
@@ -116,95 +117,11 @@ namespace SimpleRender.SceneObjects
             return x;
         }
 
-        private Vector3f ConvertToDecart(Vector4 vector)
-        {
-            return new Vector3f(vector.X / (float)vector.W, vector.Y / (float)vector.W, vector.Z / (float)vector.W);
-        }
-
         private Vector3f ConvertToScreenCoord0(Vector3f decart)
         {
             var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
             var screenY = _halfscreenHeight + _halfscreenHeight * decart.Y;
             return new Vector3f((float)screenX, (float)screenY, decart.Z);
-        }
-
-        private Vector3f ConvertToScreenCoord01(Vector3f decart, double far, double near)
-        {
-            var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
-            var screenY = _halfscreenHeight + _halfscreenHeight * decart.Y;
-            var screenZ = (far-near)/2*decart.Z;
-            return new Vector3f((float)screenX, (float)screenY, decart.Z);
-        }
-
-        private Point2D ConvertToScreenCoord1(Vector3f vector)
-        {
-            var dist = 480d;
-            var a = vector.X / (_halfScreenWidth);
-            var b = vector.Y / (_halfscreenHeight);
-            var c = (vector.Z + dist) / dist;
-            var screenX = _halfScreenWidth + _halfScreenWidth * a / c;
-            var screenY = _halfscreenHeight - _halfscreenHeight * b / c;
-            return new Point2D((int)screenX, (int)screenY);
-        }
-
-        private Point2D ConvertToScreenCoord2(Vector3f vector)
-        {
-            var fov = 1d;
-            var screenX = _halfScreenWidth + vector.X * fov / vector.Z;
-            var screenY = _halfscreenHeight - vector.Y * fov / vector.Z;
-            return new Point2D((int)screenX, (int)screenY);
-        }
-
-        private Matrix GetFrustum(double left, double right, double bottom, double top, double near, double far)
-        {
-            var a = (right + left)/(right - left);
-            var b = (top + bottom)/(top - bottom);
-            var c = (far + near)/(far - near);
-            var d = (-2*far*near)/(far - near);
-
-            var matrix = new Matrix(
-                2 * near / (right - left), 0, 0, 0,
-                0, 2 * near / (top - bottom), 0, 0,
-                a, b, c, 1,
-                0, 0, d, 0
-                );
-            return matrix;
-        }
-
-        /// <summary>
-        /// Leftside-coordinate frustum
-        /// </summary>
-        /// <param name="fovy">fov  y in degrees</param>
-        /// <param name="aspect">aspect = w div h</param>
-        /// <param name="near">near</param>
-        /// <param name="far">far</param>
-        /// <returns>frustum matrix</returns>
-        private Matrix GetPerspectiveMatrix(double fovyInDegree, double aspect, double near, double far)
-        {
-            //2n/h = ctg(fovy/2)
-            //aspect = w/h
-            //2n/w = ctg(fovy/2)/aspect
-
-            var fovy = Math3D.DegToRad(fovyInDegree);
-
-            if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
-            var matrix = new Matrix(
-                Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
-                0, Math3D.Cotan(fovy / 2), 0, 0,
-                0, 0, (far + near) / (far - near), 1,
-                0, 0, (-2 * far * near) / (far - near), 0
-                );
-            return matrix;
-        }
-
-        private Matrix GetPerspectiveMatrix2(double projectionHeight, double aspect, double near, double far)
-        {
-            //TODO проверить это
-            //var fovyInDegree = Math3D.ArcCotan((2*near/projectionHeight)*2);
-            var fovyInDegree = Math3D.CalculateAngle(projectionHeight, near);
-
-            var matrix = GetPerspectiveMatrix(fovyInDegree, aspect, near, far);
-            return matrix;
         }
     }
 }
