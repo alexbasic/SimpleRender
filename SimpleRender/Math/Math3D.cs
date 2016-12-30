@@ -142,5 +142,68 @@ namespace SimpleRender.Math
         {
             return (Math.PI * gradtheta) / 180.0d;
         }
+
+        /// <summary>
+        /// Leftside-coordinate frustum
+        /// </summary>
+        /// <param name="fovy">fov  y in degrees</param>
+        /// <param name="aspect">aspect = w div h</param>
+        /// <param name="near">near</param>
+        /// <param name="far">far</param>
+        /// <returns>frustum matrix</returns>
+        public static Matrix GetPerspectiveMatrix(double fovyInDegree, double aspect, double near, double far)
+        {
+            //2n/h = ctg(fovy/2)
+            //aspect = w/h
+            //2n/w = ctg(fovy/2)/aspect
+
+            var fovy = Math3D.DegToRad(fovyInDegree);
+
+            if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
+            var matrix = new Matrix(
+                Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
+                0, Math3D.Cotan(fovy / 2), 0, 0,
+                0, 0, (far + near) / (far - near), 1,
+                0, 0, (-2 * far * near) / (far - near), 0
+                );
+            return matrix;
+        }
+
+        public static Matrix GetPerspectiveMatrix2(double projectionHeight, double aspect, double near, double far)
+        {
+            //TODO проверить это
+            //var fovyInDegree = Math3D.ArcCotan((2*near/projectionHeight)*2);
+            var fovyInDegree = Math3D.CalculateAngle(projectionHeight, near);
+
+            var matrix = GetPerspectiveMatrix(fovyInDegree, aspect, near, far);
+            return matrix;
+        }
+
+        public static Matrix GetFrustum(double left, double right, double bottom, double top, double near, double far)
+        {
+            var a = (right + left) / (right - left);
+            var b = (top + bottom) / (top - bottom);
+            var c = (far + near) / (far - near);
+            var d = (-2 * far * near) / (far - near);
+
+            var matrix = new Matrix(
+                2 * near / (right - left), 0, 0, 0,
+                0, 2 * near / (top - bottom), 0, 0,
+                a, b, c, 1,
+                0, 0, d, 0
+                );
+            return matrix;
+        }
+
+        public static Vector3f ConvertToDecart(Vector4 vector)
+        {
+            return new Vector3f(vector.X / (float)vector.W, vector.Y / (float)vector.W, vector.Z / (float)vector.W);
+        }
+
+        internal static Vector3f CalculateNormal(Vector3f vector1, Vector3f vector2, Vector3f vector3)
+        {
+            return
+                Vector3f.CrossProductLeft((vector3 - vector1), (vector2 - vector1));
+        }
     }
 }
