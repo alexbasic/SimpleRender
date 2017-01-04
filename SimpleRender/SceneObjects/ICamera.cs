@@ -43,7 +43,7 @@ namespace SimpleRender.SceneObjects
             double[] zBuffer = new double[_screenWidth * _screenHeight];
 
             var rnd = new Random();
-            var cvvMatrix = Math3D.GetPerspectiveMatrix(120, _halfScreenWidth / _halfscreenHeight, 0.3d, 10000d);
+            var cvvMatrix = Math3D.GetPerspectiveMatrix(100, _halfScreenWidth / _halfscreenHeight, 0.3d, 1000d);
             foreach (var primitive in scene.Objects)
             {
                 var rotationMatrix = Math3D.GetRotationMatrix(
@@ -57,7 +57,7 @@ namespace SimpleRender.SceneObjects
                 var modelMatrix = translationMatrix * (rotationMatrix * scaleMatrix);
                 var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0, 0.65f, -1f), new Vector3f(0, 0f, 0f));
 
-                var transformMatrix = cvvMatrix*viewMatrix;// * modelMatrix;
+                var transformMatrix = cvvMatrix * viewMatrix;// * modelMatrix;
 
                 foreach (var triangle in primitive.Faces)
                 {
@@ -81,7 +81,7 @@ namespace SimpleRender.SceneObjects
 
                     Vector3f faceNormalInProjectionCoord = SimpleRender.Math.Vector3f.CrossProductLeft((decartvector3 - decartvector1), (decartvector2 - decartvector1));
                     faceNormalInProjectionCoord = faceNormalInProjectionCoord.Normalize();
-                    var viewDirection = new Vector4(0,0,1, 1);
+                    var viewDirection = new Vector4(0,0,-1, 1);
                     double intensity = Math3D.DotProduct(faceNormalInProjectionCoord, viewDirection);
                     if (intensity <= 0) continue;
 
@@ -136,7 +136,7 @@ namespace SimpleRender.SceneObjects
         private Vector3f ConvertToScreenCoord0(Vector3f decart)
         {
             var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
-            var screenY = _halfscreenHeight + _halfscreenHeight * decart.Y;
+            var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
             return new Vector3f((float)screenX, (float)screenY, decart.Z);
         }
     }
