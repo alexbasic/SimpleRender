@@ -83,7 +83,7 @@ namespace SimpleRender.Drawing
             var px = x1;
             while (px <= x2)
             {
-                double z =/* double.MinValue*/1 + z1 + ((px - x1) * (z2 - z1) / (x2 - x1));
+                double z =/* double.MinValue*/1+(z1 + ((px - x1) * (z2 - z1) / (x2 - x1)));
 
                 SetPixel(image, px, sy, z, color, zbuffer);
 
@@ -108,7 +108,7 @@ namespace SimpleRender.Drawing
             //skip out of scren pixels
             if (x < minX || x > maxX || y < minY || y > maxY) return;
 
-            if (zbuffer[x + y * image.Width] < z)
+            if (zbuffer[x + y * image.Width] <= z)
             {
                 zbuffer[x + y * image.Width] = z;
                 //image.SetPixel(x, y, Color.FromArgb((int)(z * 255), (int)(z * 255), (int)(z * 255)));

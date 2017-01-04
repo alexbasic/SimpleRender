@@ -88,9 +88,9 @@ namespace SimpleRender.Math
             var up = Vector3f.CrossProduct(zaxis, new Vector3f(1.0f, 0.0f, 0.0f));
 
             //camera right
-            var xaxis = Vector3f.CrossProduct(up, zaxis).Normalize();
+            var xaxis = Vector3f.CrossProductLeft(up, zaxis).Normalize();
             //camera up
-            var yaxis = Vector3f.CrossProduct(zaxis, xaxis).Normalize();
+            var yaxis = Vector3f.CrossProductLeft(zaxis, xaxis).Normalize();
             //var Minv = Matrix.Identity();
             //var Tr = Matrix.Identity();
             //for (int i = 0; i < 3; i++)
@@ -160,11 +160,18 @@ namespace SimpleRender.Math
             var fovy = Math3D.DegToRad(fovyInDegree);
 
             if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
+            //var matrix = new Matrix(
+            //    Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
+            //    0, Math3D.Cotan(fovy / 2), 0, 0,
+            //    0, 0, (far + near) / (far - near), 10,
+            //    0, 0, (-2 * far * near) / (far - near), 0
+            //    );
+
             var matrix = new Matrix(
                 Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
                 0, Math3D.Cotan(fovy / 2), 0, 0,
-                0, 0, (far + near) / (far - near), 1,
-                0, 0, (-2 * far * near) / (far - near), 0
+                0, 0, (far + near) / (far - near), (-2 * far * near) / (far - near),
+                0, 0, 1, 0
                 );
             return matrix;
         }
@@ -187,10 +194,10 @@ namespace SimpleRender.Math
             var d = (-2 * far * near) / (far - near);
 
             var matrix = new Matrix(
-                2 * near / (right - left), 0, 0, 0,
-                0, 2 * near / (top - bottom), 0, 0,
-                a, b, c, 1,
-                0, 0, d, 0
+                2 * near / (right - left), 0, a, 0,
+                0, 2 * near / (top - bottom), b, 0,
+                0, 0, c, d,
+                0, 0, 1, 0
                 );
             return matrix;
         }
