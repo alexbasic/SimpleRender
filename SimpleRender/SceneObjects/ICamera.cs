@@ -55,7 +55,7 @@ namespace SimpleRender.SceneObjects
 
                 var scaleMatrix = Math3D.GetScaleMatrix(1, 1, 1);
                 var modelMatrix = translationMatrix * (rotationMatrix * scaleMatrix);
-                var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0, 0.65f, -1f), new Vector3f(0, 0f, 0f));
+                var viewMatrix = Math3D.GetViewMatrix(new Vector3f(0f, 1.2f, -2f), new Vector3f(0, 0f, 0f));
 
                 var transformMatrix = cvvMatrix * viewMatrix;// * modelMatrix;
 

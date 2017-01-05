@@ -85,7 +85,7 @@ namespace SimpleRender.Math
             //direction
             var zaxis = (position - target).Normalize();
 
-            var up = Vector3f.CrossProduct(zaxis, new Vector3f(1.0f, 0.0f, 0.0f));
+            var up = Vector3f.CrossProductLeft(new Vector3f(1.0f, 0.0f, 0.0f), zaxis);
 
             //camera right
             var xaxis = Vector3f.CrossProductLeft(up, zaxis).Normalize();
