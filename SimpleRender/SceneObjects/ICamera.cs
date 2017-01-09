@@ -113,6 +113,10 @@ namespace SimpleRender.SceneObjects
                         1) 
                         * illuminationIntensity;
 
+                    //var reflection = (Vector3f.CrossProductLeft(faceNormalInWorldCoord ,
+                    //    (Vector3f.CrossProductLeft(faceNormalInWorldCoord ,globalLightPosition) * 2.0f)) -
+                    //    globalLightPosition).Normalize();   // reflected light
+
                     var sampleColor = scene.AmbientColor + diffuseColor * ligthSource.Intensity;
 
                         Draw3D.Triangle(
