@@ -202,12 +202,26 @@ namespace SimpleRender.Math
             return matrix;
         }
 
+        public static Matrix GetScreenMatrix(int width, int height)
+        {
+            var a = (width - 1)/2;
+            var b = (height - 1)/2;
+            var c = -b;
+            var matrix = new Matrix(
+                a, 0, 0, a,
+                0, c, 0, b,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+                );
+            return matrix;
+        }
+
         public static Vector3f ConvertToDecart(Vector4 vector)
         {
             return new Vector3f(vector.X / (float)vector.W, vector.Y / (float)vector.W, vector.Z / (float)vector.W);
         }
 
-        internal static Vector3f CalculateNormal(Vector3f vector1, Vector3f vector2, Vector3f vector3)
+        public static Vector3f CalculateNormal(Vector3f vector1, Vector3f vector2, Vector3f vector3)
         {
             return
                 Vector3f.CrossProductLeft((vector3 - vector1), (vector2 - vector1));
