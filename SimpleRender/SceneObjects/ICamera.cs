@@ -30,8 +30,8 @@ namespace SimpleRender.SceneObjects
         {
             _screenWidth = screenWidth;
             _screenHeight = screenHeight;
-            _halfScreenWidth = screenWidth / 2;
-            _halfscreenHeight = screenHeight / 2;
+            _halfScreenWidth = (int)((screenWidth - 1) / 2);
+            _halfscreenHeight = (int)((screenHeight - 1) / 2);
             Image = new Bitmap(screenWidth, screenHeight);
         }
 
@@ -141,6 +141,7 @@ namespace SimpleRender.SceneObjects
         {
             var screenX = _halfScreenWidth + _halfScreenWidth * decart.X;
             var screenY = _halfscreenHeight - _halfscreenHeight * decart.Y;
+
             return new Vector3f((float)screenX, (float)screenY, decart.Z);
         }
     }
