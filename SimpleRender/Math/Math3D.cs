@@ -226,5 +226,35 @@ namespace SimpleRender.Math
             return
                 Vector3f.CrossProductLeft((vector3 - vector1), (vector2 - vector1));
         }
+
+        public static Vector3f CalculateBarecentric(Vector3f v1, Vector3f v2, Vector3f v3)
+        {
+            var ds = 0;
+            var ds0 = 0;
+            var ds1 = 0;
+
+            var b0 = ds0/ds;
+            var b1 = ds1/ds;
+            var b2 = 1 - b1 - b0;
+
+            return new Vector3f(b0, b1, b2);
+        }
+
+        public static float InterpolateAttribute(Vector3f v1, Vector3f v2, Vector3f v3, float t0, float t1, float t2)
+        {
+            var barycentricCoord = CalculateBarecentric(v1, v2, v3);
+            var b0 = barycentricCoord.X;
+            var b1 = barycentricCoord.Y;
+            var b2 = barycentricCoord.Z;
+            var z0 = v1.Z;
+            var z1 = v2.Z;
+            var z2 = v3.Z;
+
+            var tByz = (t0/z0)*b0 + (t1/z1)*b1 + (t2/z2)*b2; //calculate t/z
+            var oneByz = (1 / z0) * b0 + (1 / z1) * b1 + (1 / z2) * b2; //calculate 1/z
+
+            var t = tByz/oneByz;
+            return 0f;
+        }
     }
 }
