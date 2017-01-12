@@ -17,6 +17,31 @@ namespace SimpleRender.Test
     public class Draw2DTest
     {
         [Test]
+        public void PricisionTest()
+        {
+            double x = 0.0d;
+            Assert.IsTrue(x == 0d);
+
+            x = 0.9d;
+            Assert.IsFalse(x == 0d);
+
+            x = Double.Epsilon;
+            Assert.IsFalse(x == 0d);
+
+            x = 0.0000000000000000000000000001d;
+            Assert.IsFalse(x == 0d);
+
+            x = Double.Epsilon - Double.Epsilon;
+            Assert.IsTrue(x == 0d);
+
+            float x2 = 0.0f;
+            Assert.IsTrue(x2 == 0.0f);
+
+            x = Double.Epsilon;
+            Assert.IsTrue(x2 == 0);
+        }
+
+        [Test]
         public void DrawLines() 
         {
             var form = new TestForm();
@@ -122,11 +147,11 @@ namespace SimpleRender.Test
                 var zbuffer = new double[320 * 240];
 
                 //Проверяем прямой порядок вершин по у
-                Draw3D.Triangle(vertex1, vertex2, new Vector3f(150.3f, 120.1f, 0), bmp, Color.White, zbuffer);
-                Draw3D.Triangle(new Vector3f(220, 60, 0), new Vector3f(200, 120, 0), new Vector3f(319, 120, 0), bmp, Color.Orange, zbuffer);
+                Draw3D.SimpleRasterizeTriangle(vertex1, vertex2, new Vector3f(150.3f, 120.1f, 0), bmp, Color.White, zbuffer);
+                Draw3D.SimpleRasterizeTriangle(new Vector3f(220, 60, 0), new Vector3f(200, 120, 0), new Vector3f(319, 120, 0), bmp, Color.Orange, zbuffer);
 
                 //обратный порядок вершин по Y
-                Draw3D.Triangle(new Vector3f(10, 200, 0), new Vector3f(180, 180, 0), new Vector3f(70, 140, 0), bmp, Color.Green, zbuffer);
+                Draw3D.SimpleRasterizeTriangle(new Vector3f(10, 200, 0), new Vector3f(180, 180, 0), new Vector3f(70, 140, 0), bmp, Color.Green, zbuffer);
 
                 e.Graphics.DrawImage(bmp, 0, 0);
             };

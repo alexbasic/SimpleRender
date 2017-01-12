@@ -11,7 +11,7 @@ namespace SimpleRender.Drawing
 {
     public class Draw3D
     {
-        public static void Triangle(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, double[] zbuffer)
+        public static void SimpleRasterizeTriangle(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, double[] zbuffer)
         {
             // пропускаем рисование если треугольник ребром
             if ((int)t0.Y == (int)t1.Y && (int)t0.Y == (int)t2.Y) return;
