@@ -120,6 +120,58 @@ namespace SimpleRender.Drawing
             var edge0 = new Line(vertex1.X, vertex1.Y, vertex0.X, vertex0.Y);
             var edge1 = new Line(vertex2.X, vertex2.Y, vertex1.X, vertex1.Y);
             var edge2 = new Line(vertex0.X, vertex0.Y, vertex2.X, vertex2.Y);
+
+            // Calculate triangle area on screen and inverse it
+            double triangle_area_inversed = 1.0f /
+                Math3D.Triangle2dArea(vertex0.X, vertex0.Y, vertex1.X, vertex1.Y, vertex2.X, vertex2.Y);
+
+            // Construct triangle's bounding box
+            Aabb boundingBox = new Aabb
+            {
+                Left = (int)Min(vertex0.X, vertex1.X, vertex2.X),
+                Top = (int)Min(vertex0.Y, vertex1.Y, vertex2.Y),
+                Right = (int)Max(vertex0.X, vertex1.X, vertex2.X),
+                Bottom = (int)Max(vertex0.Y, vertex1.Y, vertex2.Y)
+            };
+
+            // Iterate over bounding box and check if pixel is inside the triangle
+		//
+		for (int y = boundingBox.Top; y <= boundingBox.Bottom; ++y)
+		{
+			double pixel_center_y = (double)(y) + 0.5d;
+
+			float const first_x_center{static_cast<float>(bounding_box.from.x) + 0.5f};
+
+			float edge0_equation_value{edge0.at(first_x_center, pixel_center_y)};
+			float edge1_equation_value{edge1.at(first_x_center, pixel_center_y)};
+			float edge2_equation_value{edge2.at(first_x_center, pixel_center_y)};
+
+			for (unsigned int x{bounding_box.from.x}; x <= bounding_box.to.x; ++x)
+			{
+				float const pixel_center_x{static_cast<float>(x) + 0.5f};
+            }
         }
+
+        }
+
+        private static double Min(double a, double b, double c)
+        {
+            var m = System.Math.Min(a, b);
+            return System.Math.Min(m, c);
+        }
+
+        private static double Max(double a, double b, double c)
+        {
+            var m = System.Math.Max(a, b);
+            return System.Math.Max(m, c);
+        }
+    }
+
+    public struct Aabb
+    {
+        public int Left;
+        public int Right;
+        public int Top;
+        public int Bottom;
     }
 }
