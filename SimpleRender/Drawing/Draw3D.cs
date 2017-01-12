@@ -83,7 +83,7 @@ namespace SimpleRender.Drawing
             var px = x1;
             while (px <= x2)
             {
-                double z =/* double.MinValue*/1+(z1 + ((px - x1) * (z2 - z1) / (x2 - x1)));
+                double z =/* double.MinValue*/1 + (z1 + ((px - x1) * (z2 - z1) / (x2 - x1)));
 
                 SetPixel(image, px, sy, z, color, zbuffer);
 
@@ -111,9 +111,15 @@ namespace SimpleRender.Drawing
             if (zbuffer[x + y * image.Width] <= z)
             {
                 zbuffer[x + y * image.Width] = z;
-                //image.SetPixel(x, y, Color.FromArgb((int)(z * 255), (int)(z * 255), (int)(z * 255)));
                 image.SetPixel(x, y, color);
             }
+        }
+
+        public static void RasterizeTraversalAabb(Vector3f vertex0, Vector3f vertex1, Vector3f vertex2)
+        {
+            var edge0 = new Line(vertex1.X, vertex1.Y, vertex0.X, vertex0.Y);
+            var edge1 = new Line(vertex2.X, vertex2.Y, vertex1.X, vertex1.Y);
+            var edge2 = new Line(vertex0.X, vertex0.Y, vertex2.X, vertex2.Y);
         }
     }
 }
