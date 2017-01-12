@@ -185,8 +185,8 @@ namespace SimpleRender.Math
 
         public static Matrix GetScreenMatrix(int width, int height)
         {
-            var a = (width - 1)/2;
-            var b = (height - 1)/2;
+            var a = (width - 1) / 2;
+            var b = (height - 1) / 2;
             var c = -b;
             var matrix = new Matrix(
                 a, 0, 0, a,
@@ -214,8 +214,8 @@ namespace SimpleRender.Math
             var ds0 = 0;
             var ds1 = 0;
 
-            var b0 = ds0/ds;
-            var b1 = ds1/ds;
+            var b0 = ds0 / ds;
+            var b1 = ds1 / ds;
             var b2 = 1 - b1 - b0;
 
             return new Vector3f(b0, b1, b2);
@@ -231,11 +231,24 @@ namespace SimpleRender.Math
             var z1 = v2.Z;
             var z2 = v3.Z;
 
-            var tByz = (t0/z0)*b0 + (t1/z1)*b1 + (t2/z2)*b2; //calculate t/z
+            var tByz = (t0 / z0) * b0 + (t1 / z1) * b1 + (t2 / z2) * b2; //calculate t/z
             var oneByz = (1 / z0) * b0 + (1 / z1) * b1 + (1 / z2) * b2; //calculate 1/z
 
-            var t = tByz/oneByz;
+            var t = tByz / oneByz;
             return t;
+        }
+
+        public static double Triangle2dArea(
+            double x0, double y0,
+            double x1, double y1,
+            double x2, double y2)
+        {
+            return Math.Abs(0.5d * (x0 * (y1 - y2) + x1 * (y2 - y0) + x2 * (y0 - y1)));
+        }
+
+        public static double Clamp(double value, double from, double to)
+        {
+            return (value > to ? to : (value < from ? from : value));
         }
     }
 }
