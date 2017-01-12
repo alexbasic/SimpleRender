@@ -119,7 +119,7 @@ namespace SimpleRender.SceneObjects
 
                     var sampleColor = scene.AmbientColor + diffuseColor * ligthSource.Intensity;
 
-                        Draw3D.Triangle(
+                        Draw3D.SimpleRasterizeTriangle(
                             ConvertToScreenCoord0(decartvector1),
                             ConvertToScreenCoord0(decartvector2),
                             ConvertToScreenCoord0(decartvector3),
