@@ -85,7 +85,11 @@ namespace SimpleRender.Math
             //direction
             var zaxis = (position - target).Normalize();
 
-            var up = Vector3f.CrossProductLeft(new Vector3f(1.0f, 0.0f, 0.0f), zaxis);
+            var fakeUp = new Vector3f(1.0f, 0.0f, 0.0f);
+
+            //right
+            //https://github.com/loreglean/lantern/blob/master/lantern/src/camera.cpp#L82
+            var up = Vector3f.CrossProductLeft(fakeUp, zaxis);
 
             //camera right
             var xaxis = Vector3f.CrossProductLeft(up, zaxis).Normalize();
