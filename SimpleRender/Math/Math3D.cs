@@ -91,23 +91,6 @@ namespace SimpleRender.Math
             var xaxis = Vector3f.CrossProductLeft(up, zaxis).Normalize();
             //camera up
             var yaxis = Vector3f.CrossProductLeft(zaxis, xaxis).Normalize();
-            //var Minv = Matrix.Identity();
-            //var Tr = Matrix.Identity();
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    Minv[0][i] = x[i];
-            //    Minv[1][i] = y[i];
-            //    Minv[2][i] = z[i];
-            //    Tr[i][3] = -center[i];
-            //}
-            //var modelView = Minv * Tr;
-
-            //return new Matrix(
-            //    xaxis.X, yaxis.X, zaxis.X, 0,
-            //    xaxis.Y, yaxis.Y, zaxis.Y, 0,
-            //    xaxis.Z, yaxis.Z, zaxis.Z, 0,
-            //    -Math3D.DotProduct(xaxis, eye), -Math3D.DotProduct(yaxis, eye), -Math3D.DotProduct(zaxis, eye), 1
-            //    );
 
             var camRotationMatrix = new Matrix(
                     xaxis.X, xaxis.Y, xaxis.Z, 0,
@@ -160,12 +143,6 @@ namespace SimpleRender.Math
             var fovy = Math3D.DegToRad(fovyInDegree);
 
             if (far < 0 || near < 0) throw new Exception("Far and near must be positive");
-            //var matrix = new Matrix(
-            //    Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
-            //    0, Math3D.Cotan(fovy / 2), 0, 0,
-            //    0, 0, (far + near) / (far - near), 10,
-            //    0, 0, (-2 * far * near) / (far - near), 0
-            //    );
 
             var matrix = new Matrix(
                 Math3D.Cotan(fovy / 2) / aspect, 0, 0, 0,
@@ -254,7 +231,7 @@ namespace SimpleRender.Math
             var oneByz = (1 / z0) * b0 + (1 / z1) * b1 + (1 / z2) * b2; //calculate 1/z
 
             var t = tByz/oneByz;
-            return 0f;
+            return t;
         }
     }
 }
