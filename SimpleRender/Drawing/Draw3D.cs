@@ -115,7 +115,7 @@ namespace SimpleRender.Drawing
             }
         }
 
-        public static void RasterizeTraversalAabb(Vector3f vertex0, Vector3f vertex1, Vector3f vertex2)
+        public static void RasterizeTraversalAabb(Vector3f vertex0, Vector3f vertex1, Vector3f vertex2, Bitmap image, Color color, double[] zbuffer)
         {
             var edge0 = new Line(vertex1.X, vertex1.Y, vertex0.X, vertex0.Y);
             var edge1 = new Line(vertex2.X, vertex2.Y, vertex1.X, vertex1.Y);
@@ -135,23 +135,107 @@ namespace SimpleRender.Drawing
             };
 
             // Iterate over bounding box and check if pixel is inside the triangle
-		//
-		for (int y = boundingBox.Top; y <= boundingBox.Bottom; ++y)
-		{
-			double pixel_center_y = (double)(y) + 0.5d;
+            //
+            for (int y = boundingBox.Top; y <= boundingBox.Bottom; ++y)
+            {
+                double pixel_center_y = ((double)y) + 0.5d;
 
-			float const first_x_center{static_cast<float>(bounding_box.from.x) + 0.5f};
+                double first_x_center = ((double)boundingBox.Left) + 0.5d;
 
-			float edge0_equation_value{edge0.at(first_x_center, pixel_center_y)};
-			float edge1_equation_value{edge1.at(first_x_center, pixel_center_y)};
-			float edge2_equation_value{edge2.at(first_x_center, pixel_center_y)};
+                double edge0_equation_value = edge0.At(first_x_center, pixel_center_y);
+                double edge1_equation_value = edge1.At(first_x_center, pixel_center_y);
+                double edge2_equation_value = edge2.At(first_x_center, pixel_center_y);
 
-			for (unsigned int x{bounding_box.from.x}; x <= bounding_box.to.x; ++x)
-			{
-				float const pixel_center_x{static_cast<float>(x) + 0.5f};
+                for (int x = boundingBox.Left; x <= boundingBox.Right; ++x)
+                {
+                    double pixel_center_x = ((double)x) + 0.5d;
+
+                    if (is_point_on_positive_halfspace_top_left(edge0_equation_value, edge0.A, edge0.B) &&
+                        is_point_on_positive_halfspace_top_left(edge1_equation_value, edge1.A, edge1.B) &&
+                        is_point_on_positive_halfspace_top_left(edge2_equation_value, edge2.A, edge2.B))
+                    {
+
+                        double area01 = Math3D.Triangle2dArea(vertex0.X, vertex0.Y, vertex1.X, vertex1.Y, pixel_center_x, pixel_center_y);
+                        double area12 = Math3D.Triangle2dArea(vertex1.X, vertex1.Y, vertex2.X, vertex2.Y, pixel_center_x, pixel_center_y);
+
+                        // Calculate barycentric coordinates
+                        //
+                        double b2 = area01 * triangle_area_inversed;
+                        double b0 = area12 * triangle_area_inversed;
+                        double b1 = 1.0f - b0 - b2;
+
+                        // Process different attributes
+                        //
+                        //                    set_bind_points_values_from_barycentric<color>(
+                        //                    binded_attributes.color_attributes,
+                        //                    index0, index1, index2,
+                        //                    b0, b1, b2,
+                        //                    vertex0.w, vertex1.w, vertex2.w);
+
+                        //                    set_bind_points_values_from_barycentric<float>(
+                        //                        binded_attributes.float_attributes,
+                        //                        index0, index1, index2,
+                        //                        b0, b1, b2,
+                        //                        vertex0.w, vertex1.w, vertex2.w);
+
+                        //                    set_bind_points_values_from_barycentric<vector2f>(
+                        //                        binded_attributes.vector2f_attributes,
+                        //                        index0, index1, index2,
+                        //                        b0, b1, b2,
+                        //                        vertex0.w, vertex1.w, vertex2.w);
+
+                        //                    set_bind_points_values_from_barycentric<vector3f>(
+                        //                        binded_attributes.vector3f_attributes,
+                        //                        index0, index1, index2,
+                        //                        b0, b1, b2,
+                        //vertex0.w, vertex1.w, vertex2.w);
+
+                        //    vector2ui pixel_coordinates{x, y};
+                        //vector3f sample_point{pixel_center_x, pixel_center_y, 0.0f};
+                        //delegate.process_rasterizing_stage_result(pixel_coordinates, sample_point, shader, target_texture);
+
+                    }
+
+                    edge0_equation_value += edge0.A;
+                    edge1_equation_value += edge1.A;
+                    edge2_equation_value += edge2.A;
+                }
             }
+
         }
 
+        private static bool is_point_on_positive_halfspace_top_left(
+        double edge_equation_value, double edge_equation_a, double edge_equation_b)
+        {
+            var esilon = double.Epsilon;
+            // If we are on the edge, use top-left filling rule
+            //
+            if (System.Math.Abs(edge_equation_value) < esilon)
+            {
+                // edge_equation_value == 0.0f, thus point is on the edge,
+                // and we use top-left rule to decide if point is inside a triangle
+                //
+                if (System.Math.Abs(edge_equation_a) < esilon)
+                {
+                    // edge.a == 0.0f, thus it's a horizontal edge and is either a top or a bottom one
+                    //
+
+                    // If normal y coordinate is pointing up - we are on the top edge
+                    // Otherwise we are on the bottom edge
+                    return edge_equation_b > 0.0f;
+                }
+                else
+                {
+                    // If normal x coordinate is pointing right - we are on the left edge
+                    // Otherwise we are on the right edge
+                    return edge_equation_a > 0.0f;
+                }
+            }
+            else
+            {
+                // Check if we're on a positive halfplane
+                return edge_equation_value > 0.0f;
+            }
         }
 
         private static double Min(double a, double b, double c)

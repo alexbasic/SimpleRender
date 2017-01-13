@@ -8,9 +8,9 @@ namespace SimpleRender.Math
 {
     public class Line
     {
-        private double A;
-        private double B;
-        private double C;
+        public double A;
+        public double B;
+        public double C;
 
         public Line(double coefficientA, double coefficientB, double coefficientC)
         {
