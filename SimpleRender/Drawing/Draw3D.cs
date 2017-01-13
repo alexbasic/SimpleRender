@@ -166,11 +166,11 @@ namespace SimpleRender.Drawing
 
                         // Process different attributes
                         //
-                        //                    set_bind_points_values_from_barycentric<color>(
-                        //                    binded_attributes.color_attributes,
-                        //                    index0, index1, index2,
-                        //                    b0, b1, b2,
-                        //                    vertex0.w, vertex1.w, vertex2.w);
+                        set_bind_points_values_from_barycentric<color>(
+                        binded_attributes.color_attributes,
+                        index0, index1, index2,
+                        b0, b1, b2,
+                        vertex0.W, vertex1.W, vertex2.W);
 
                         //                    set_bind_points_values_from_barycentric<float>(
                         //                        binded_attributes.float_attributes,
@@ -203,6 +203,41 @@ namespace SimpleRender.Drawing
             }
 
         }
+
+        private void set_bind_points_values_from_barycentric(
+        IEnumerable<BindedMeshAttributeInfo<TAttr>> binds,
+		int index0, int index1, int index2,
+		double b0, double b1, double b2,
+		double z0_view_space_reciprocal, double z1_view_space_reciprocal, double z2_view_space_reciprocal)
+	{
+        //size_t binds_count{binds.size()};
+        //for (size_t i{0}; i < binds_count; ++i)
+        //{
+        //    binded_mesh_attribute_info<TAttr> const& binded_attr = binds[i];
+        //    std::vector<TAttr> const& binded_attr_data = binded_attr.info.get_data();
+        //    std::vector<unsigned int> const& binded_attr_indices = binded_attr.info.get_indices();
+
+        //    TAttr const& value0 = binded_attr_data[binded_attr_indices[index0]];
+        //    TAttr const& value1 = binded_attr_data[binded_attr_indices[index1]];
+        //    TAttr const& value2 = binded_attr_data[binded_attr_indices[index2]];
+
+        //    if (binded_attr.info.get_interpolation_option() == attribute_interpolation_option::linear)
+        //    {
+        //        (*binded_attr.bind_point) = value0 * b0 + value1 * b1 + value2 * b2;
+        //    }
+        //    else if (binded_attr.info.get_interpolation_option() == attribute_interpolation_option::perspective_correct)
+        //    {
+        //        TAttr const value0_div_zview = value0 * z0_view_space_reciprocal;
+        //        TAttr const value1_div_zview = value1 * z1_view_space_reciprocal;
+        //        TAttr const value2_div_zview = value2 * z2_view_space_reciprocal;
+
+        //        float const zview_reciprocal_interpolated = z0_view_space_reciprocal * b0 + z1_view_space_reciprocal * b1 + z2_view_space_reciprocal * b2;
+        //        TAttr value_div_zview_interpolated = value0_div_zview * b0 + value1_div_zview * b1 + value2_div_zview * b2;
+
+        //        (*binded_attr.bind_point) = value_div_zview_interpolated * (1.0f / zview_reciprocal_interpolated);
+        //    }
+        //}
+}
 
         private static bool is_point_on_positive_halfspace_top_left(
         double edge_equation_value, double edge_equation_a, double edge_equation_b)
@@ -257,5 +292,30 @@ namespace SimpleRender.Drawing
         public int Right;
         public int Top;
         public int Bottom;
+    }
+
+    public class BindedMeshAttributeInfo<TAttr>
+    {
+		/** Attribute data */
+		public MeshAttributeInfo<TAttr> info;
+
+		/** Address of variable to put interpolated value into */
+		TAttr bind_point;
+    }
+
+	/** Container for all the binds
+	* @ingroup Rendering
+	*/
+	public class BindedMeshAttributes
+	{
+        IEnumerable<BindedMeshAttributeInfo<color>> color_attributes;
+        IEnumerable<BindedMeshAttributeInfo<float>> float_attributes;
+        IEnumerable<BindedMeshAttributeInfo<Vector2>> vector2f_attributes;
+        IEnumerable<BindedMeshAttributeInfo<Vector3f>> vector3f_attributes;
+}
+
+    public class MeshAttributeInfo<TAttr>
+    {
+        
     }
 }
