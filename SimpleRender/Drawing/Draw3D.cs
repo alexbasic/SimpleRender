@@ -115,7 +115,7 @@ namespace SimpleRender.Drawing
             }
         }
 
-        public static void RasterizeTraversalAabb(Vector3f vertex0, Vector3f vertex1, Vector3f vertex2, Bitmap image, Color color, double[] zbuffer)
+        public static void RasterizeTraversalAabb(Vector4 vertex0, Vector4 vertex1, Vector4 vertex2, Bitmap image, Color color, double[] zbuffer, BindedMeshAttributes bindedAttributes, int index0, int index1, int index2)
         {
             var edge0 = new Line(vertex1.X, vertex1.Y, vertex0.X, vertex0.Y);
             var edge1 = new Line(vertex2.X, vertex2.Y, vertex1.X, vertex1.Y);
@@ -166,33 +166,35 @@ namespace SimpleRender.Drawing
 
                         // Process different attributes
                         //
-                        set_bind_points_values_from_barycentric<color>(
-                        binded_attributes.color_attributes,
+                        SetBindPointsValuesFromBarycentric<Color4>(
+                        bindedAttributes.color_attributes,
                         index0, index1, index2,
                         b0, b1, b2,
                         vertex0.W, vertex1.W, vertex2.W);
 
-                        //                    set_bind_points_values_from_barycentric<float>(
-                        //                        binded_attributes.float_attributes,
-                        //                        index0, index1, index2,
-                        //                        b0, b1, b2,
-                        //                        vertex0.w, vertex1.w, vertex2.w);
+                        SetBindPointsValuesFromBarycentric<double>(
+                            bindedAttributes.float_attributes,
+                            index0, index1, index2,
+                            b0, b1, b2,
+                            vertex0.W, vertex1.W, vertex2.W);
 
-                        //                    set_bind_points_values_from_barycentric<vector2f>(
-                        //                        binded_attributes.vector2f_attributes,
-                        //                        index0, index1, index2,
-                        //                        b0, b1, b2,
-                        //                        vertex0.w, vertex1.w, vertex2.w);
+                        SetBindPointsValuesFromBarycentric<Vector2>(
+                            bindedAttributes.vector2f_attributes,
+                            index0, index1, index2,
+                            b0, b1, b2,
+                            vertex0.W, vertex1.W, vertex2.W);
 
-                        //                    set_bind_points_values_from_barycentric<vector3f>(
-                        //                        binded_attributes.vector3f_attributes,
-                        //                        index0, index1, index2,
-                        //                        b0, b1, b2,
-                        //vertex0.w, vertex1.w, vertex2.w);
+                        SetBindPointsValuesFromBarycentric<Vector3f>(
+                            bindedAttributes.vector3f_attributes,
+                            index0, index1, index2,
+                            b0, b1, b2,
+                            vertex0.W, vertex1.W, vertex2.W);
 
-                        //    vector2ui pixel_coordinates{x, y};
-                        //vector3f sample_point{pixel_center_x, pixel_center_y, 0.0f};
-                        //delegate.process_rasterizing_stage_result(pixel_coordinates, sample_point, shader, target_texture);
+                        var pixel_coordinates = new Point2D(x, y);
+                        Vector3f sample_point = new Vector3f((float)pixel_center_x, (float)pixel_center_y, 0.0f);
+                        //process_rasterizing_stage_result(pixel_coordinates, sample_point, shader, target_texture);
+
+                        //TODO доделать
 
                     }
 
@@ -204,7 +206,7 @@ namespace SimpleRender.Drawing
 
         }
 
-        private void set_bind_points_values_from_barycentric(
+        private static void SetBindPointsValuesFromBarycentric<TAttr>(
         IEnumerable<BindedMeshAttributeInfo<TAttr>> binds,
 		int index0, int index1, int index2,
 		double b0, double b1, double b2,
@@ -308,14 +310,22 @@ namespace SimpleRender.Drawing
 	*/
 	public class BindedMeshAttributes
 	{
-        IEnumerable<BindedMeshAttributeInfo<color>> color_attributes;
-        IEnumerable<BindedMeshAttributeInfo<float>> float_attributes;
-        IEnumerable<BindedMeshAttributeInfo<Vector2>> vector2f_attributes;
-        IEnumerable<BindedMeshAttributeInfo<Vector3f>> vector3f_attributes;
+        public IEnumerable<BindedMeshAttributeInfo<Color4>> color_attributes;
+        public IEnumerable<BindedMeshAttributeInfo<double>> float_attributes;
+        public IEnumerable<BindedMeshAttributeInfo<Vector2>> vector2f_attributes;
+        public IEnumerable<BindedMeshAttributeInfo<Vector3f>> vector3f_attributes;
 }
 
     public class MeshAttributeInfo<TAttr>
     {
         
+    }
+
+    public class Color4
+    {
+        public double Red { get; set; }
+        public double Green { get; set; }
+        public double Blue { get; set; }
+        public double Alpha { get; set; }
     }
 }
