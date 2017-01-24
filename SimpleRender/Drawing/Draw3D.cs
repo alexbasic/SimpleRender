@@ -55,7 +55,7 @@ namespace SimpleRender.Drawing
                     double tmpZ = z1; z1 = z2; z2 = tmpZ;
                 }
 
-                DrawHorizontalLine(image, (int)sy, (int)x1, (int)x2, z1, z2, color, zbuffer);
+                DrawHorizontalLine(image, (int)sy, (int)System.Math.Round(x1), (int)System.Math.Round(x2), z1, z2, color, zbuffer);
             }
         }
 
