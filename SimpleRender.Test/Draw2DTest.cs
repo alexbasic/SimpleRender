@@ -152,7 +152,7 @@ namespace SimpleRender.Test
 
                 var imageScale = 20;
 
-                e.Graphics.DrawImage(bmp, new Rectangle(0, 0, 300, 300), new Rectangle(0, 0, 15, 15), GraphicsUnit.Pixel);
+                DrawBitmap(e.Graphics, bmp, new Rectangle(0, 0, 300, 300));
 
                 DrawGrid(new Pen(Color.Gray), e.Graphics, 15, 15, 300, 300);
                 DrawBoundTriangle(new Pen(Color.Red), e.Graphics, vertex1, vertex2, vertex3, imageScale);
@@ -193,6 +193,24 @@ namespace SimpleRender.Test
             graphics.DrawLine(pen, vertex1.X * imageScale, vertex1.Y * imageScale, vertex2.X * imageScale, vertex2.Y * imageScale);
             graphics.DrawLine(pen, vertex2.X * imageScale, vertex2.Y * imageScale, vertex3.X * imageScale, vertex3.Y * imageScale);
             graphics.DrawLine(pen, vertex3.X * imageScale, vertex3.Y * imageScale, vertex1.X * imageScale, vertex1.Y * imageScale);
+        }
+
+        private void DrawBitmap(Graphics graphics, Bitmap bmp, Rectangle destRect)
+        {
+            var stepX = destRect.Width / bmp.Width;
+            var stepY = destRect.Height / bmp.Height;
+
+            for (int h = 0; h < bmp.Height; h++)
+            {
+                for (int w = 0; w < bmp.Width; w++)
+                {
+                    var color = bmp.GetPixel(w, h);
+
+                    var brush = new SolidBrush(color);
+
+                    graphics.FillRectangle(brush, stepX * w, stepY * h, stepX, stepY);
+                }
+            }
         }
     }
 }
