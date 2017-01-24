@@ -132,10 +132,11 @@ namespace SimpleRender.Test
         public void DrawTriangles_SubpixelAccuracity()
         {
             var form = new TestForm();
-            form.ClientSize = new Size(640,480);
+            form.ClientSize = new Size(300,300);
 
-            var vertex1 = new Vector3f(148.5f, 20, 0);
-            var vertex2 = new Vector3f(10, 119.0f, 0);
+            var vertex1 = new Vector3f(0.5f, 0.5f, 0);
+            var vertex2 = new Vector3f(5.1f, 0.9f, 0);
+            var vertex3 = new Vector3f(4.8f, 4.9f, 0);
 
             form.Paint += (object sender, PaintEventArgs e) =>
             {
@@ -143,17 +144,18 @@ namespace SimpleRender.Test
                 e.Graphics.SmoothingMode = SmoothingMode.None;
                 e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
-                Bitmap bmp = new Bitmap(320, 240);
-                var zbuffer = new double[320 * 240];
+                Bitmap bmp = new Bitmap(15, 15);
+                var zbuffer = new double[15 * 15];
 
                 //Проверяем прямой порядок вершин по у
-                Draw3D.SimpleRasterizeTriangle(vertex1, vertex2, new Vector3f(150.3f, 120.1f, 0), bmp, Color.White, zbuffer);
-                Draw3D.SimpleRasterizeTriangle(new Vector3f(220, 60, 0), new Vector3f(200, 120, 0), new Vector3f(319, 120, 0), bmp, Color.Orange, zbuffer);
+                Draw3D.SimpleRasterizeTriangle(vertex1, vertex2, vertex3, bmp, Color.Green, zbuffer);
 
-                //обратный порядок вершин по Y
-                Draw3D.SimpleRasterizeTriangle(new Vector3f(10, 200, 0), new Vector3f(180, 180, 0), new Vector3f(70, 140, 0), bmp, Color.Green, zbuffer);
+                var imageScale = 20;
 
-                e.Graphics.DrawImage(bmp, 0, 0);
+                e.Graphics.DrawImage(bmp, new Rectangle(0, 0, 300, 300), new Rectangle(0, 0, 15, 15), GraphicsUnit.Pixel);
+
+                DrawGrid(new Pen(Color.Gray), e.Graphics, 15, 15, 300, 300);
+                DrawBoundTriangle(new Pen(Color.Red), e.Graphics, vertex1, vertex2, vertex3, imageScale);
             };
 
             form.KeyDown += (object sender, KeyEventArgs e) =>
@@ -168,6 +170,29 @@ namespace SimpleRender.Test
             };
 
             Application.Run(form);
+        }
+
+        private void DrawGrid(Pen pen, Graphics graphics, int cols, int rows, int canvasWidth, int canvasHeight)
+        {
+            var stepX = canvasHeight/cols;
+            for (var col = 0; col < cols; col++)
+            {
+                var x = col * stepX;
+                graphics.DrawLine(pen,x, 0, x,canvasHeight);
+            }
+
+            for (var row = 0; row < rows; row++)
+            {
+                var y = row * stepX;
+                graphics.DrawLine(pen, 0, y, canvasWidth, y);
+            }
+        }
+
+        private void DrawBoundTriangle(Pen pen, Graphics graphics, Vector3f vertex1, Vector3f vertex2, Vector3f vertex3, int imageScale)
+        {
+            graphics.DrawLine(pen, vertex1.X * imageScale, vertex1.Y * imageScale, vertex2.X * imageScale, vertex2.Y * imageScale);
+            graphics.DrawLine(pen, vertex2.X * imageScale, vertex2.Y * imageScale, vertex3.X * imageScale, vertex3.Y * imageScale);
+            graphics.DrawLine(pen, vertex3.X * imageScale, vertex3.Y * imageScale, vertex1.X * imageScale, vertex1.Y * imageScale);
         }
     }
 }

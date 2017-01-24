@@ -14,26 +14,26 @@ namespace SimpleRender.Drawing
         public static void SimpleRasterizeTriangle(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, double[] zbuffer)
         {
             // пропускаем рисование если треугольник ребром
-            if ((int)t0.Y == (int)t1.Y && (int)t0.Y == (int)t2.Y) return;
+            if (System.Math.Abs(t1.Y - t0.Y) <= float.Epsilon && System.Math.Abs(t2.Y - t0.Y) <= float.Epsilon) return;
 
             var A = t0;
             var B = t1;
             var C = t2;
 
             // здесь сортируем вершины (A,B,C) по оси Y
-            if ((int)A.Y > (int)B.Y) Swap(ref A, ref B);
-            if ((int)A.Y > (int)C.Y) Swap(ref A, ref C);
-            if ((int)B.Y > (int)C.Y) Swap(ref B, ref C);
+            if (A.Y > B.Y) Swap(ref A, ref B);
+            if (A.Y > C.Y) Swap(ref A, ref C);
+            if (B.Y > C.Y) Swap(ref B, ref C);
 
-            for (int sy = (int)A.Y; sy <= (int)C.Y; sy++)
+            for (float sy = A.Y; sy <= C.Y; sy++)
             {
-                int x1 = (int)A.X + (sy - (int)A.Y) * ((int)C.X - (int)A.X) / ((int)C.Y - (int)A.Y);
+                float x1 = A.X + (sy - A.Y) * (C.X - A.X) / (C.Y - A.Y);
                 double z1 = A.Z + (sy - A.Y) * (C.Z - A.Z) / (C.Y - A.Y);
-                int x2;
+                float x2;
                 double z2;
-                if (sy < (int)B.Y)
+                if (sy < B.Y)
                 {
-                    x2 = (int)A.X + (sy - (int)A.Y) * ((int)B.X - (int)A.X) / ((int)B.Y - (int)A.Y);
+                    x2 = A.X + (sy - A.Y) * (B.X - A.X) / (B.Y - A.Y);
                     z2 = A.Z + (sy - A.Y) * (B.Z - A.Z) / (B.Y - A.Y);
                 }
                 else
@@ -45,17 +45,17 @@ namespace SimpleRender.Drawing
                     }
                     else
                     {
-                        x2 = (int)B.X + (sy - (int)B.Y) * ((int)C.X - (int)B.X) / ((int)C.Y - (int)B.Y);
+                        x2 = B.X + (sy - B.Y) * (C.X - B.X) / (C.Y - B.Y);
                         z2 = B.Z + (sy - B.Y) * (C.Z - B.Z) / (C.Y - B.Y);
                     }
                 }
                 if (x1 > x2)
                 {
-                    int tmp = x1; x1 = x2; x2 = tmp;
+                    float tmp = x1; x1 = x2; x2 = tmp;
                     double tmpZ = z1; z1 = z2; z2 = tmpZ;
                 }
 
-                DrawHorizontalLine(image, sy, x1, x2, z1, z2, color, zbuffer);
+                DrawHorizontalLine(image, (int)sy, (int)x1, (int)x2, z1, z2, color, zbuffer);
             }
         }
 
