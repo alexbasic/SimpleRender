@@ -21,46 +21,123 @@ namespace SimpleRender.Drawing
             var C = t2;
 
             // здесь сортируем вершины (A,B,C) по оси Y
+            //if (A.Y > B.Y) Swap(A, B);
+            //if (A.Y > C.Y) Swap(A, C);
+            //if (B.Y > C.Y) Swap(B, C);
+
             if (A.Y > B.Y) Swap(ref A, ref B);
             if (A.Y > C.Y) Swap(ref A, ref C);
             if (B.Y > C.Y) Swap(ref B, ref C);
 
-            for (float sy = A.Y; sy <= C.Y; sy++)
-            {
-                float x1 = A.X + (sy - A.Y) * (C.X - A.X) / (C.Y - A.Y);
-                double z1 = A.Z + (sy - A.Y) * (C.Z - A.Z) / (C.Y - A.Y);
-                float x2;
-                double z2;
-                if (sy < B.Y)
-                {
-                    x2 = A.X + (sy - A.Y) * (B.X - A.X) / (B.Y - A.Y);
-                    z2 = A.Z + (sy - A.Y) * (B.Z - A.Z) / (B.Y - A.Y);
-                }
-                else
-                {
-                    if ((int)C.Y == (int)B.Y)
-                    {
-                        x2 = (int)B.X;
-                        z2 = B.Z;
-                    }
-                    else
-                    {
-                        x2 = B.X + (sy - B.Y) * (C.X - B.X) / (C.Y - B.Y);
-                        z2 = B.Z + (sy - B.Y) * (C.Z - B.Z) / (C.Y - B.Y);
-                    }
-                }
-                if (x1 > x2)
-                {
-                    float tmp = x1; x1 = x2; x2 = tmp;
-                    double tmpZ = z1; z1 = z2; z2 = tmpZ;
-                }
+            //var D = new Vector3f(
+            //    A.X + (B.Y - A.Y) * (C.X - A.X) / (C.Y - A.Y),
+            //    B.Y,
+            //    A.Z + (B.Y - A.Y) * (C.Z - A.Z) / (C.Y - A.Y));
 
-                DrawHorizontalLine(image, (int)sy, (int)System.Math.Round(x1), (int)System.Math.Round(x2), z1, z2, color, zbuffer);
+            //if (B.X < C.X)
+            //{
+            //    var tmpX = B.X;
+            //    var tmpY = B.Y;
+            //    var tmpZ = B.Z;
+            //    B.X = C.X;
+            //    B.Y = C.Y;
+            //    B.Z = C.Z;
+
+            //    C.X = tmpX;
+            //    C.Y = tmpY;
+            //    C.Z = tmpZ;
+            //}
+
+            //Now, we have A,B,C,D
+
+            //ABD
+            var dxLeft = (C.X - A.X) / (C.Y - A.Y);
+            var dxRight = (B.X - A.X) / (B.Y - A.Y);
+            var dxRightNew = (C.X - B.X) / (C.Y - B.Y);
+
+            var dzLeft = (double)(C.Z - A.Z) / (C.Y - A.Y);
+            var dzRight = (double)(B.Z - A.Z) / (B.Y - A.Y);
+            var dzRightNew = (double)(B.Z - A.Z) / (B.Y - A.Y);
+
+            var xLeft = A.X;
+            var xRight = A.X;
+
+            double zLeft = A.Z;
+            double zRight = A.Z;
+
+            
+            for (int sy = (int)A.Y; sy <= (int)C.Y; sy++)
+            {
+                if (xLeft > xRight)
+                {
+                    float tmp = xLeft; xLeft = xRight; xRight = tmp;
+                    double tmpZ = dzLeft; dzLeft = dzRight; dzRight = tmpZ;
+                }
+                DrawHorizontalLine(image, sy, (int)xLeft, (int)xRight, dzLeft, dzRight, color, zbuffer);
+
+                xLeft += dxLeft;
+                xRight += dxRight;
+
+                zLeft += dzLeft;
+                zRight += dzRight;
+
+                if (sy == (int) B.Y) dxRight = dxRightNew;
             }
         }
 
+        //public static void SimpleRasterizeTriangle_Old(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, double[] zbuffer)
+        //{
+        //    // пропускаем рисование если треугольник ребром
+        //    if (System.Math.Abs(t1.Y - t0.Y) <= float.Epsilon && System.Math.Abs(t2.Y - t0.Y) <= float.Epsilon) return;
+
+        //    var A = t0;
+        //    var B = t1;
+        //    var C = t2;
+
+        //    // здесь сортируем вершины (A,B,C) по оси Y
+        //    if (A.Y > B.Y) Swap(ref A, ref B);
+        //    if (A.Y > C.Y) Swap(ref A, ref C);
+        //    if (B.Y > C.Y) Swap(ref B, ref C);
+
+        //    var shiftY = System.Math.Ceiling(A.Y)-A.Y;
+
+        //    for (float sy = A.Y; sy <= C.Y; sy++)
+        //    {
+        //        float x1 = A.X + (sy - A.Y) * (C.X - A.X) / (C.Y - A.Y);
+        //        double z1 = A.Z + (sy - A.Y) * (C.Z - A.Z) / (C.Y - A.Y);
+        //        float x2;
+        //        double z2;
+        //        if (sy < B.Y)
+        //        {
+        //            x2 = A.X + (sy - A.Y) * (B.X - A.X) / (B.Y - A.Y);
+        //            z2 = A.Z + (sy - A.Y) * (B.Z - A.Z) / (B.Y - A.Y);
+        //        }
+        //        else
+        //        {
+        //            if ((int)C.Y == (int)B.Y)
+        //            {
+        //                x2 = (int)B.X;
+        //                z2 = B.Z;
+        //            }
+        //            else
+        //            {
+        //                x2 = B.X + (sy - B.Y) * (C.X - B.X) / (C.Y - B.Y);
+        //                z2 = B.Z + (sy - B.Y) * (C.Z - B.Z) / (C.Y - B.Y);
+        //            }
+        //        }
+        //        if (x1 > x2)
+        //        {
+        //            float tmp = x1; x1 = x2; x2 = tmp;
+        //            double tmpZ = z1; z1 = z2; z2 = tmpZ;
+        //        }
+
+        //        DrawHorizontalLine(image, (int)(sy+shiftY), (int)System.Math.Ceiling(x1), (int)System.Math.Ceiling(x2)-1, z1, z2, color, zbuffer);
+        //    }
+        //}
+
         private static void DrawHorizontalLine(Bitmap image, int sy, int x1, int x2, double z1, double z2, Color color, double[] zbuffer)
         {
+            if (x2 < x1) throw new ArgumentOutOfRangeException(string.Format("Parameter x1={0} must be less the x2={1}", x1, x2));
             var frameWidth = image.Width;
             var maxX = image.Width - 1;
             var minX = 0;
@@ -96,6 +173,17 @@ namespace SimpleRender.Drawing
             var tmp = a;
             a = b;
             b = tmp;
+
+            //var tmpX = b.X;
+            //var tmpY = b.Y;
+            //var tmpZ = b.Z;
+            //b.X = a.X;
+            //b.Y = a.Y;
+            //b.Z = a.Z;
+
+            //a.X = tmpX;
+            //a.Y = tmpY;
+            //a.Z = tmpZ;
         }
 
         private static void SetPixel(Bitmap image, int x, int y, double z, Color color, double[] zbuffer)
@@ -108,11 +196,11 @@ namespace SimpleRender.Drawing
             //skip out of scren pixels
             if (x < minX || x > maxX || y < minY || y > maxY) return;
 
-            if (zbuffer[x + y * image.Width] <= z)
-            {
+            //if (zbuffer[x + y * image.Width] <= z)
+            //{
                 zbuffer[x + y * image.Width] = z;
                 image.SetPixel(x, y, color);
-            }
+            //}
         }
 
         public static void RasterizeTraversalAabb(Vector4 vertex0, Vector4 vertex1, Vector4 vertex2, Bitmap image, Color color, double[] zbuffer, BindedMeshAttributes bindedAttributes, int index0, int index1, int index2)
