@@ -37,25 +37,29 @@ namespace SimpleRender.Drawing
             var dxRight = (C.X - A.X) / (C.Y - A.Y);
             var dxLeftNew = (C.X - B.X) / (C.Y - B.Y);
 
+            var dy = 1;//(float)(System.Math.Ceiling(A.Y) - A.Y);
+            
+
             var xLeft = A.X;
             var xRight = A.X;
             
-            for (var sy = A.Y; sy <= B.Y; sy++)
+            for (var sy = (int)System.Math.Ceiling(A.Y); sy < (int)(System.Math.Ceiling(B.Y)); sy++)
             {
-                DrawHorizontalLine(image, (int)sy, (int)xLeft, (int)xRight, 0d, 0d, color, zbuffer);
+                DrawHorizontalLine(image, sy, (int)(xLeft), (int)(xRight), 0d, 0d, color, zbuffer);
 
-                xLeft += dxLeft;
-                xRight += dxRight;
+                xLeft += (dxLeft * dy);
+                xRight += (dxRight * dy);
             }
 
-            xLeft =B.X;
+            //dy = (float)(System.Math.Ceiling(B.Y) - B.Y);
+            xLeft = B.X;
 
-            for (var sy = B.Y; sy <= C.Y; sy++)
+            for (var sy = (int)System.Math.Ceiling(B.Y); sy <= (int)(System.Math.Ceiling(C.Y)); sy++)
             {
-                DrawHorizontalLine(image, (int)sy, (int)xLeft, (int)xRight, 0d, 0d, color, zbuffer);
+                DrawHorizontalLine(image, sy, (int)xLeft, (int)xRight, 0d, 0d, color, zbuffer);
 
-                xLeft += dxLeftNew;
-                xRight += dxRight;
+                xLeft += (dxLeftNew * dy);
+                xRight += (dxRight * dy);
             }
         }
 
