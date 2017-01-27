@@ -16,72 +16,46 @@ namespace SimpleRender.Drawing
             // пропускаем рисование если треугольник ребром
             if (System.Math.Abs(t1.Y - t0.Y) <= float.Epsilon && System.Math.Abs(t2.Y - t0.Y) <= float.Epsilon) return;
 
-            var A = t0;
-            var B = t1;
-            var C = t2;
+            var A = new Vector3f(t0.X, t0.Y, t0.Z);
+            var B = new Vector3f(t1.X, t1.Y, t1.Z);
+            var C = new Vector3f(t2.X, t2.Y, t2.Z);
 
             // здесь сортируем вершины (A,B,C) по оси Y
-            //if (A.Y > B.Y) Swap(A, B);
-            //if (A.Y > C.Y) Swap(A, C);
-            //if (B.Y > C.Y) Swap(B, C);
-
-            if (A.Y > B.Y) Swap(ref A, ref B);
-            if (A.Y > C.Y) Swap(ref A, ref C);
-            if (B.Y > C.Y) Swap(ref B, ref C);
+            if (A.Y > B.Y) SwapValues(A, B);
+            if (A.Y > C.Y) SwapValues(A, C);
+            if (B.Y > C.Y) SwapValues(B, C);
 
             //var D = new Vector3f(
             //    A.X + (B.Y - A.Y) * (C.X - A.X) / (C.Y - A.Y),
             //    B.Y,
             //    A.Z + (B.Y - A.Y) * (C.Z - A.Z) / (C.Y - A.Y));
 
-            //if (B.X < C.X)
-            //{
-            //    var tmpX = B.X;
-            //    var tmpY = B.Y;
-            //    var tmpZ = B.Z;
-            //    B.X = C.X;
-            //    B.Y = C.Y;
-            //    B.Z = C.Z;
-
-            //    C.X = tmpX;
-            //    C.Y = tmpY;
-            //    C.Z = tmpZ;
-            //}
-
             //Now, we have A,B,C,D
 
             //ABD
-            var dxLeft = (C.X - A.X) / (C.Y - A.Y);
-            var dxRight = (B.X - A.X) / (B.Y - A.Y);
-            var dxRightNew = (C.X - B.X) / (C.Y - B.Y);
-
-            var dzLeft = (double)(C.Z - A.Z) / (C.Y - A.Y);
-            var dzRight = (double)(B.Z - A.Z) / (B.Y - A.Y);
-            var dzRightNew = (double)(B.Z - A.Z) / (B.Y - A.Y);
+            var dxLeft = (B.X - A.X) / (B.Y - A.Y);
+            var dxRight = (C.X - A.X) / (C.Y - A.Y);
+            var dxLeftNew = (C.X - B.X) / (C.Y - B.Y);
 
             var xLeft = A.X;
             var xRight = A.X;
-
-            double zLeft = A.Z;
-            double zRight = A.Z;
-
             
-            for (int sy = (int)A.Y; sy <= (int)C.Y; sy++)
+            for (var sy = A.Y; sy <= B.Y; sy++)
             {
-                if (xLeft > xRight)
-                {
-                    float tmp = xLeft; xLeft = xRight; xRight = tmp;
-                    double tmpZ = dzLeft; dzLeft = dzRight; dzRight = tmpZ;
-                }
-                DrawHorizontalLine(image, sy, (int)xLeft, (int)xRight, dzLeft, dzRight, color, zbuffer);
+                DrawHorizontalLine(image, (int)sy, (int)xLeft, (int)xRight, 0d, 0d, color, zbuffer);
 
                 xLeft += dxLeft;
                 xRight += dxRight;
+            }
 
-                zLeft += dzLeft;
-                zRight += dzRight;
+            xLeft =B.X;
 
-                if (sy == (int) B.Y) dxRight = dxRightNew;
+            for (var sy = B.Y; sy <= C.Y; sy++)
+            {
+                DrawHorizontalLine(image, (int)sy, (int)xLeft, (int)xRight, 0d, 0d, color, zbuffer);
+
+                xLeft += dxLeftNew;
+                xRight += dxRight;
             }
         }
 
@@ -137,7 +111,10 @@ namespace SimpleRender.Drawing
 
         private static void DrawHorizontalLine(Bitmap image, int sy, int x1, int x2, double z1, double z2, Color color, double[] zbuffer)
         {
-            if (x2 < x1) throw new ArgumentOutOfRangeException(string.Format("Parameter x1={0} must be less the x2={1}", x1, x2));
+            if (x1 > x2)
+            {
+                var tmp = x1; x1 = x2; x2 = tmp;
+            }
             var frameWidth = image.Width;
             var maxX = image.Width - 1;
             var minX = 0;
@@ -168,22 +145,25 @@ namespace SimpleRender.Drawing
             }
         }
 
+        private static void SwapValues(Vector3f a, Vector3f b)
+        {
+            var tmpX = b.X;
+            var tmpY = b.Y;
+            var tmpZ = b.Z;
+            b.X = a.X;
+            b.Y = a.Y;
+            b.Z = a.Z;
+
+            a.X = tmpX;
+            a.Y = tmpY;
+            a.Z = tmpZ;
+        }
+
         private static void Swap(ref Vector3f a, ref Vector3f b)
         {
             var tmp = a;
             a = b;
             b = tmp;
-
-            //var tmpX = b.X;
-            //var tmpY = b.Y;
-            //var tmpZ = b.Z;
-            //b.X = a.X;
-            //b.Y = a.Y;
-            //b.Z = a.Z;
-
-            //a.X = tmpX;
-            //a.Y = tmpY;
-            //a.Z = tmpZ;
         }
 
         private static void SetPixel(Bitmap image, int x, int y, double z, Color color, double[] zbuffer)
