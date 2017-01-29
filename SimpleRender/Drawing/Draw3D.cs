@@ -25,41 +25,48 @@ namespace SimpleRender.Drawing
             if (A.Y > C.Y) SwapValues(A, C);
             if (B.Y > C.Y) SwapValues(B, C);
 
-            //var D = new Vector3f(
-            //    A.X + (B.Y - A.Y) * (C.X - A.X) / (C.Y - A.Y),
-            //    B.Y,
-            //    A.Z + (B.Y - A.Y) * (C.Z - A.Z) / (C.Y - A.Y));
+            var Dx = A.X + (((B.Y - A.Y) * (C.X - A.X)) / (C.Y - A.Y));
 
             //Now, we have A,B,C,D
 
             //ABD
+
             var dxLeft = (B.X - A.X) / (B.Y - A.Y);
             var dxRight = (C.X - A.X) / (C.Y - A.Y);
             var dxLeftNew = (C.X - B.X) / (C.Y - B.Y);
 
-            var dy = 1;//(float)(System.Math.Ceiling(A.Y) - A.Y);
-            
+            var correctYLeft = (System.Math.Ceiling(A.Y) - A.Y);
+            var correctYRight = (System.Math.Ceiling(A.Y) - A.Y);
+            var correctYLeftNew = (System.Math.Ceiling(B.Y) - B.Y);
 
-            var xLeft = A.X;
-            var xRight = A.X;
-            
-            for (var sy = (int)System.Math.Ceiling(A.Y); sy < (int)(System.Math.Ceiling(B.Y)); sy++)
+            var xLeft = A.X + (dxLeft * correctYLeft);
+            var xRight = A.X + (dxRight * correctYRight);
+
+            if ((int)(System.Math.Ceiling(B.Y)) >= (int)(System.Math.Ceiling(A.Y)))
             {
-                DrawHorizontalLine(image, sy, (int)(xLeft), (int)(xRight), 0d, 0d, color, zbuffer);
 
-                xLeft += (dxLeft * dy);
-                xRight += (dxRight * dy);
+                for (var sy = (int)System.Math.Ceiling(A.Y); sy <= (int)(System.Math.Ceiling(B.Y)-1); sy++)
+                {
+                    DrawHorizontalLine(image, sy, xLeft, xRight, 0d, 0d, color, zbuffer);
+
+                    xLeft += dxLeft;
+                    xRight += dxRight;
+                }
             }
 
-            //dy = (float)(System.Math.Ceiling(B.Y) - B.Y);
-            xLeft = B.X;
+            xLeft = B.X + (dxLeftNew * correctYLeftNew);
+            xRight = Dx + (dxRight * correctYLeftNew);
 
-            for (var sy = (int)System.Math.Ceiling(B.Y); sy <= (int)(System.Math.Ceiling(C.Y)); sy++)
+            if ((int)(System.Math.Ceiling(C.Y) - 1) >= (int)(System.Math.Ceiling(B.Y)))
             {
-                DrawHorizontalLine(image, sy, (int)xLeft, (int)xRight, 0d, 0d, color, zbuffer);
 
-                xLeft += (dxLeftNew * dy);
-                xRight += (dxRight * dy);
+                for (var sy = (int)System.Math.Ceiling(B.Y); sy <= (int)(System.Math.Ceiling(C.Y)-1); sy++)
+                {
+                    DrawHorizontalLine(image, sy, xLeft, xRight, 0d, 0d, Color.Blue, zbuffer);
+
+                    xLeft += dxLeftNew;
+                    xRight += dxRight;
+                }
             }
         }
 
@@ -113,13 +120,16 @@ namespace SimpleRender.Drawing
         //    }
         //}
 
-        private static void DrawHorizontalLine(Bitmap image, int sy, int x1, int x2, double z1, double z2, Color color, double[] zbuffer)
+        private static void DrawHorizontalLine(Bitmap image, int sy, double left, double right, double z1, double z2, Color color, double[] zbuffer)
         {
-            if (x1 > x2)
+            if (left > right)
             {
-                var tmp = x1; x1 = x2; x2 = tmp;
+                var tmp = left; left = right; right = tmp;
             }
-            var frameWidth = image.Width;
+            int x1 = (int)(System.Math.Ceiling(left));
+            int x2 = (int)(System.Math.Ceiling(right)-1);
+            if (x1 > x2) x2 = x1;
+
             var maxX = image.Width - 1;
             var minX = 0;
             var maxY = image.Height - 1;
