@@ -134,9 +134,9 @@ namespace SimpleRender.Test
             var form = new TestForm();
             form.ClientSize = new Size(300,300);
 
-            var vertex1 = new Vector3f(0.5f, 0.5f, 0);
-            var vertex2 = new Vector3f(5.1f, 0.9f, 0);
-            var vertex3 = new Vector3f(4.8f, 4.9f, 0);
+            var vertex1 = new Vector3f(1f, 1f, 0);
+            var vertex2 = new Vector3f(5f, 1f, 0);
+            var vertex3 = new Vector3f(5f, 5f, 0);
 
             form.Paint += (object sender, PaintEventArgs e) =>
             {

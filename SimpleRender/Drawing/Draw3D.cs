@@ -13,8 +13,9 @@ namespace SimpleRender.Drawing
     {
         public static void SimpleRasterizeTriangle(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, double[] zbuffer)
         {
+            var triangleMinSize = float.Epsilon;
             // пропускаем рисование если треугольник ребром
-            if (System.Math.Abs(t1.Y - t0.Y) <= float.Epsilon && System.Math.Abs(t2.Y - t0.Y) <= float.Epsilon) return;
+            if (FCMP(t1.Y, t0.Y) && FCMP(t2.Y, t1.Y) || FCMP(t1.X, t0.X) && FCMP(t2.X, t1.X)) return;
 
             var A = new Vector3f(t0.X, t0.Y, t0.Z);
             var B = new Vector3f(t1.X, t1.Y, t1.Z);
@@ -27,25 +28,25 @@ namespace SimpleRender.Drawing
 
             var Dx = A.X + (((B.Y - A.Y) * (C.X - A.X)) / (C.Y - A.Y));
 
-            //Now, we have A,B,C,D
-
-            //ABD
-
             var dxLeft = (B.X - A.X) / (B.Y - A.Y);
             var dxRight = (C.X - A.X) / (C.Y - A.Y);
             var dxLeftNew = (C.X - B.X) / (C.Y - B.Y);
 
-            var correctYLeft = (System.Math.Ceiling(A.Y) - A.Y);
-            var correctYRight = (System.Math.Ceiling(A.Y) - A.Y);
-            var correctYLeftNew = (System.Math.Ceiling(B.Y) - B.Y);
+            var y0 = (int)System.Math.Ceiling(A.Y);
+            var y1 = (int)System.Math.Ceiling(B.Y);
+            var y2 = (int)System.Math.Ceiling(C.Y);
 
-            var xLeft = A.X + (dxLeft * correctYLeft);
-            var xRight = A.X + (dxRight * correctYRight);
+            var correctFirstTriangle = (System.Math.Ceiling(A.Y) - A.Y);
+            var correctSecondTriangle = (System.Math.Ceiling(B.Y) - B.Y);
 
-            if ((int)(System.Math.Ceiling(B.Y)) >= (int)(System.Math.Ceiling(A.Y)))
+            var xLeft = A.X + (dxLeft * correctFirstTriangle);
+            var xRight = A.X + (dxRight * correctFirstTriangle);
+
+            var bottom = y1 - 1;
+
+            if (bottom >= y0)
             {
-
-                for (var sy = (int)System.Math.Ceiling(A.Y); sy <= (int)(System.Math.Ceiling(B.Y)-1); sy++)
+                for (var sy = y0; sy <= bottom; sy++)
                 {
                     DrawHorizontalLine(image, sy, xLeft, xRight, 0d, 0d, color, zbuffer);
 
@@ -54,20 +55,26 @@ namespace SimpleRender.Drawing
                 }
             }
 
-            xLeft = B.X + (dxLeftNew * correctYLeftNew);
-            xRight = Dx + (dxRight * correctYLeftNew);
+            xLeft = B.X + (dxLeftNew * correctSecondTriangle);
+            xRight = Dx + (dxRight * correctSecondTriangle);
 
-            if ((int)(System.Math.Ceiling(C.Y) - 1) >= (int)(System.Math.Ceiling(B.Y)))
+            bottom = y2 - 1;
+
+            if (bottom >= y1)
             {
-
-                for (var sy = (int)System.Math.Ceiling(B.Y); sy <= (int)(System.Math.Ceiling(C.Y)-1); sy++)
+                for (var sy = y1; sy <= bottom; sy++)
                 {
-                    DrawHorizontalLine(image, sy, xLeft, xRight, 0d, 0d, Color.Blue, zbuffer);
+                    DrawHorizontalLine(image, sy, xLeft, xRight, 0d, 0d, color, zbuffer);
 
                     xLeft += dxLeftNew;
                     xRight += dxRight;
                 }
             }
+        }
+
+        private static bool FCMP(float a, float b)
+        {
+            return System.Math.Abs(b - a) <= float.Epsilon;
         }
 
         //public static void SimpleRasterizeTriangle_Old(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, double[] zbuffer)
@@ -128,7 +135,7 @@ namespace SimpleRender.Drawing
             }
             int x1 = (int)(System.Math.Ceiling(left));
             int x2 = (int)(System.Math.Ceiling(right)-1);
-            if (x1 > x2) x2 = x1;
+            //if (x1 > x2) x2 = x1;
 
             var maxX = image.Width - 1;
             var minX = 0;
@@ -139,12 +146,12 @@ namespace SimpleRender.Drawing
             if (sy < minY || sy > maxY) return;
             if (x1 < minX)
             {
-                z1 = z1 + ((minX - x1) * (z2 - z1) / (x2 - x1));
+                //z1 = z1 + ((minX - x1) * (z2 - z1) / (x2 - x1));
                 x1 = minX;
             }
             if (x2 > maxX)
             {
-                z2 = z1 + ((maxX - x1) * (z2 - z1) / (x2 - x1));
+                //z2 = z1 + ((maxX - x1) * (z2 - z1) / (x2 - x1));
                 x2 = maxX;
             }
 
@@ -173,12 +180,12 @@ namespace SimpleRender.Drawing
             a.Z = tmpZ;
         }
 
-        private static void Swap(ref Vector3f a, ref Vector3f b)
-        {
-            var tmp = a;
-            a = b;
-            b = tmp;
-        }
+        //private static void Swap(ref Vector3f a, ref Vector3f b)
+        //{
+        //    var tmp = a;
+        //    a = b;
+        //    b = tmp;
+        //}
 
         private static void SetPixel(Bitmap image, int x, int y, double z, Color color, double[] zbuffer)
         {
@@ -190,11 +197,11 @@ namespace SimpleRender.Drawing
             //skip out of scren pixels
             if (x < minX || x > maxX || y < minY || y > maxY) return;
 
-            //if (zbuffer[x + y * image.Width] <= z)
-            //{
+            if (zbuffer[x + y * image.Width] <= z)
+            {
                 zbuffer[x + y * image.Width] = z;
                 image.SetPixel(x, y, color);
-            //}
+            }
         }
 
         public static void RasterizeTraversalAabb(Vector4 vertex0, Vector4 vertex1, Vector4 vertex2, Bitmap image, Color color, double[] zbuffer, BindedMeshAttributes bindedAttributes, int index0, int index1, int index2)
