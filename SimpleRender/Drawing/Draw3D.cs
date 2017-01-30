@@ -74,7 +74,8 @@ namespace SimpleRender.Drawing
 
         private static bool FCMP(float a, float b)
         {
-            return System.Math.Abs(b - a) <= float.Epsilon;
+            var epsilon = 1d; 
+            return System.Math.Abs(b - a) <= epsilon;
         }
 
         //public static void SimpleRasterizeTriangle_Old(Vector3f t0, Vector3f t1, Vector3f t2, Bitmap image, Color color, double[] zbuffer)
