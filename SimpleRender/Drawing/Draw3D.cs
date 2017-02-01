@@ -135,8 +135,8 @@ namespace SimpleRender.Drawing
                 var tmp = left; left = right; right = tmp;
             }
             int x1 = (int)(System.Math.Ceiling(left));
-            int x2 = (int)(System.Math.Ceiling(right)-1);
-            //if (x1 > x2) x2 = x1;
+            int x2 = (int)(System.Math.Ceiling(right) - 1);
+            if (x2 < x1) return;
 
             var maxX = image.Width - 1;
             var minX = 0;
@@ -147,19 +147,18 @@ namespace SimpleRender.Drawing
             if (sy < minY || sy > maxY) return;
             if (x1 < minX)
             {
-                //z1 = z1 + ((minX - x1) * (z2 - z1) / (x2 - x1));
                 x1 = minX;
             }
             if (x2 > maxX)
             {
-                //z2 = z1 + ((maxX - x1) * (z2 - z1) / (x2 - x1));
                 x2 = maxX;
             }
 
             var px = x1;
             while (px <= x2)
             {
-                double z =/* double.MinValue*/1 + (z1 + ((px - x1) * (z2 - z1) / (x2 - x1)));
+                //TODO Нужно интерполировать Z
+                double z = 0d;
 
                 SetPixel(image, px, sy, z, color, zbuffer);
 
@@ -181,13 +180,6 @@ namespace SimpleRender.Drawing
             a.Z = tmpZ;
         }
 
-        //private static void Swap(ref Vector3f a, ref Vector3f b)
-        //{
-        //    var tmp = a;
-        //    a = b;
-        //    b = tmp;
-        //}
-
         private static void SetPixel(Bitmap image, int x, int y, double z, Color color, double[] zbuffer)
         {
             var maxX = image.Width - 1;
@@ -197,6 +189,8 @@ namespace SimpleRender.Drawing
 
             //skip out of scren pixels
             if (x < minX || x > maxX || y < minY || y > maxY) return;
+
+            //TODO Здесь нужен вызов фрагментного шейдера
 
             if (zbuffer[x + y * image.Width] <= z)
             {

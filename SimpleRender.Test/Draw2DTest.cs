@@ -166,6 +166,32 @@ namespace SimpleRender.Test
                 if (e.KeyCode == Keys.W) vertex2.Y -= 0.05f;
                 if (e.KeyCode == Keys.S) vertex2.Y += 0.05f;
 
+                if (e.KeyCode == Keys.Left)
+                {
+                    vertex1.X -= 0.05f;
+                    vertex2.X -= 0.05f;
+                    vertex3.X -= 0.05f;
+                }
+                if (e.KeyCode == Keys.Right)
+                {
+                    vertex1.X += 0.05f;
+                    vertex2.X += 0.05f;
+                    vertex3.X += 0.05f;
+                }
+
+                if (e.KeyCode == Keys.Up)
+                {
+                    vertex1.Y -= 0.05f;
+                    vertex2.Y -= 0.05f;
+                    vertex3.Y -= 0.05f;
+                }
+                if (e.KeyCode == Keys.Down)
+                {
+                    vertex1.Y += 0.05f;
+                    vertex2.Y += 0.05f;
+                    vertex3.Y += 0.05f;
+                }
+
                 form.Refresh();
             };
 

@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using SimpleRender.Drawing;
 using SimpleRender.Math;
 
 namespace SimpleRender.SceneObjects
 {
-    public interface ICamera
-    {
-        void Render(Scene scene);
-    }
-
-    public class Camera : ICamera
+    public class PipeLine
     {
         private double _halfScreenWidth;
         private double _halfscreenHeight;
@@ -26,7 +16,7 @@ namespace SimpleRender.SceneObjects
 
         public Bitmap Image { get; set; }
 
-        public Camera(int screenWidth, int screenHeight)
+        public PipeLine(int screenWidth, int screenHeight)
         {
             _screenWidth = screenWidth;
             _screenHeight = screenHeight;
@@ -65,6 +55,10 @@ namespace SimpleRender.SceneObjects
                     var v2 = primitive.Vertices[triangle.Vertex2];
                     var v3 = primitive.Vertices[triangle.Vertex3];
 
+                    //TODO Здесь нужен вызов фрагментного шейдера
+                    //shader.Set(v1,v2,v3) shader.Compute()
+
+                    #region Завернуть в шейдер
                     var worldCoord1 = modelMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
                     var worldCoord2 = modelMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
                     var worldCoord3 = modelMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
@@ -81,14 +75,16 @@ namespace SimpleRender.SceneObjects
 
                     Vector3f faceNormalInProjectionCoord = SimpleRender.Math.Vector3f.CrossProductLeft((decartvector3 - decartvector1), (decartvector2 - decartvector1));
                     faceNormalInProjectionCoord = faceNormalInProjectionCoord.Normalize();
-                    var viewDirection = new Vector4(0,0,-1, 1);
+                    var viewDirection = new Vector4(0, 0, -1, 1);
                     double intensity = Math3D.DotProduct(faceNormalInProjectionCoord, viewDirection);
+
+                    //TODO Подумать нужноли это в шейдере
                     if (intensity <= 0) continue;
 
                     //ambient = Ka,
-//diffuse = Kd * cos(N, L),
-//specular = Ks * pow(cos(R, V), Ns),
-//intensity = ambient + amp * (diffuse + specular).
+                    //diffuse = Kd * cos(N, L),
+                    //specular = Ks * pow(cos(R, V), Ns),
+                    //intensity = ambient + amp * (diffuse + specular).
 
                     //-----------------
                     //http://www.gamedev.ru/code/articles/HLSL?page=4
@@ -107,11 +103,11 @@ namespace SimpleRender.SceneObjects
 
                     double illuminationIntensity = Math3D.DotProduct(faceNormalInWorldCoord, globalLightPosition);
                     var diffuseColor = new Vector4(
-                        primitive.Mategial.DiffuseColor.X * ligthSource.Color.X, 
-                        primitive.Mategial.DiffuseColor.Y * ligthSource.Color.Y, 
-                        primitive.Mategial.DiffuseColor.Z * ligthSource.Color.Z, 
-                        1) 
-                        * illuminationIntensity;
+                                           primitive.Mategial.DiffuseColor.X * ligthSource.Color.X,
+                                           primitive.Mategial.DiffuseColor.Y * ligthSource.Color.Y,
+                                           primitive.Mategial.DiffuseColor.Z * ligthSource.Color.Z,
+                                           1)
+                                       * illuminationIntensity;
 
                     //var reflection = (Vector3f.CrossProductLeft(faceNormalInWorldCoord ,
                     //    (Vector3f.CrossProductLeft(faceNormalInWorldCoord ,globalLightPosition) * 2.0f)) -
@@ -119,18 +115,20 @@ namespace SimpleRender.SceneObjects
 
                     var sampleColor = scene.AmbientColor + diffuseColor * ligthSource.Intensity;
 
-                        Draw3D.SimpleRasterizeTriangle(
-                            ConvertToScreenCoord0(decartvector1),
-                            ConvertToScreenCoord0(decartvector2),
-                            ConvertToScreenCoord0(decartvector3),
-                            Image,
-                            Color.FromArgb((int)(255 * Restrict(sampleColor.X)), (int)(255 * Restrict(sampleColor.Y)), (int)(255 * Restrict(sampleColor.Z))),
-                            zBuffer);
+                    #endregion
+
+                    Draw3D.SimpleRasterizeTriangle(
+                        ConvertToScreenCoord0(decartvector1),
+                        ConvertToScreenCoord0(decartvector2),
+                        ConvertToScreenCoord0(decartvector3),
+                        Image,
+                        Color.FromArgb((int)(255 * Restrict(sampleColor.X)), (int)(255 * Restrict(sampleColor.Y)), (int)(255 * Restrict(sampleColor.Z))),
+                        zBuffer);
                 }
             }
         }
 
-        private float Restrict(float x) 
+        private float Restrict(float x)
         {
             if (x > 1f) return 1f;
             if (x < 0f) return 0f;
