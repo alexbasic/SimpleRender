@@ -71,18 +71,22 @@ namespace SimpleRender.SceneObjects
             //var v2 = primitive.Vertices[triangle.Vertex2];
             //var v3 = primitive.Vertices[triangle.Vertex3];
 
-            //TODO Здесь нужен вызов фрагментного шейдера
-            //shader.Set(v1,v2,v3) shader.Compute()
+            var vec1 = new Vector4(v1.X, v1.Y, v1.Z, 1);
+            var vec2 = new Vector4(v2.X, v2.Y, v2.Z, 1);
+            var vec3 = new Vector4(v3.X, v3.Y, v3.Z, 1);
 
-            Vector3f faceNormal = Math3D.CalculateNormal(Math3D.ConvertToDecart(v1), Math3D.ConvertToDecart(v2), Math3D.ConvertToDecart(v3));
+            Vector3f faceNormal = Math3D.CalculateNormal(Math3D.ConvertToDecart(vec1), Math3D.ConvertToDecart(vec2), Math3D.ConvertToDecart(vec3));
 
-            var worldCoord1 = _modelMatrix * new Vector4(v1.Position.X, v1.Position.Y, v1.Position.Z, 1);
+            var worldCoord1 = _modelMatrix * new Vector4(v1.X, v1.Y, v1.Z, 1);
             var worldCoord2 = _modelMatrix * new Vector4(v2.X, v2.Y, v2.Z, 1);
             var worldCoord3 = _modelMatrix * new Vector4(v3.X, v3.Y, v3.Z, 1);
 
-            ShaderProgram.ComputeVertex(new VertexInput{Position = v1, Normal = (Vector4)faceNormal});
-            ShaderProgram.ComputeVertex(vi2);
-            ShaderProgram.ComputeVertex(vi3);
+            ShaderProgram.ComputeVertex(new VertexInput { 
+                Position = new Vector4(v1.X, v1.Y, v1.Z, 1), Normal = (Vector4)faceNormal });
+            ShaderProgram.ComputeVertex(new VertexInput { 
+                Position = new Vector4(v1.X, v1.Y, v1.Z, 1), Normal = (Vector4)faceNormal });
+            ShaderProgram.ComputeVertex(new VertexInput { 
+                Position = new Vector4(v1.X, v1.Y, v1.Z, 1), Normal = (Vector4)faceNormal });
 
             Draw3D.SimpleRasterizeTriangle(
                 ConvertToScreenCoord0(decartvector1),

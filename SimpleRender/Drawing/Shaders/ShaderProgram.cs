@@ -60,7 +60,7 @@ namespace SimpleRender.Drawing.Shaders
         {
             #region Завернуть в шейдер
 
-            var worldCoord1 = _modelMatrix * new Vector4(v1.Position.X, v1.Position.Y, v1.Position.Z, 1);
+            var worldCoord1 = _modelMatrix * v1.Position;
 
             var vector1 = _transformMatrix * worldCoord1;
             //var vector2 = _transformMatrix * worldCoord2;
