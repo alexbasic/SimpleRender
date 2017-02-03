@@ -10,7 +10,7 @@ namespace SimpleRender.SceneObjects
 {
     public class Scene
     {
-        public ICamera Camera { get; set; }
+        public Camera Camera { get; set; }
         public ICollection<Object3D> Objects { get; set; }
         public ICollection<LightSource> LightSources { get; set; }
         public Vector4 AmbientColor { get; set; }

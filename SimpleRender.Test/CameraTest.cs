@@ -35,7 +35,7 @@ namespace SimpleRender.Test
             form.ClientSize = new Size(320, 240);
             var t = new Timer();
 
-            t.Interval = 250;
+            t.Interval = 60;
             t.Tick += (object sender, EventArgs e) =>
             {
                 cube.Rotation.Y += 0.07f;
@@ -44,12 +44,12 @@ namespace SimpleRender.Test
 
             form.Paint += (object sender, PaintEventArgs e) =>
             {
-                var camera = new Camera(form.ClientSize.Width, form.ClientSize.Height);
-                camera.Render(scene);
+                var renderer = new Renderer(form.ClientSize.Width, form.ClientSize.Height);
+                renderer.Render(scene);
 
                 e.Graphics.Clear(Color.Black);
 
-                e.Graphics.DrawImage(camera.Image, 0, 0);
+                e.Graphics.DrawImage(renderer.FrameBuffer, 0, 0);
             };
 
             form.Load += (s, e) => { t.Enabled = true; };
